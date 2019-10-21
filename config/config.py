@@ -22,7 +22,7 @@ class Config(object):
 
     # Flask-SQLAlchemy settings
     SQLALCHEMY_ECHO = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
 
     # Flask-Mail settings

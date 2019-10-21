@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db shell recreate_db all
+.PHONY: clean list install test run db shell recreate_db migrate all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -24,6 +24,10 @@ shell:
 
 recreate_db:
 	FLASK_ENV="development" python3 -u manage.py recreate_db
+
+migrate:
+	FLASK_ENV="development" python3 -u manage.py db migrate
+	FLASK_ENV="development" python3 -u manage.py db upgrade
 
 # init:
 # 	python3 -u manage.py drop_all

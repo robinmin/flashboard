@@ -12,6 +12,7 @@
 | db          | db migration                          |
 | shell       | local flask shell                     |
 | recreate_db | recreate database schema and metadata |
+| migrate     | do db migration                       |
 
 #### Features
 
