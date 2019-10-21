@@ -23,11 +23,11 @@
 - Support pytest.
 - Support RBAC(Role Based Access Control).
 - Integrated with [bulma](https://bulma.io) for the default views.
+- Integrate with Flask-Migrate.
 
 #### TODOs
 
 - [ ] Integrate with Flask-RESTPLUS and swagger-UI.
-- [ ] Integrate with Flask-Migrate.
 
 #### Issues
 
