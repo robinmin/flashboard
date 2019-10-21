@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 
 from .forms import LoginForm, SignupForm
 from .services import UserService
-from .app import login_manager
+from .app import login_manager, send_email
 from .rbac import rbac_module
 
 bp = Blueprint('flashboard', __name__, template_folder='templates')
@@ -78,9 +78,22 @@ def signup():
 
         if password and password2 and password == password2:
             usvc = UserService()
-            user, error = usvc.register_user(name, email, password)
+            user, token, error = usvc.register_user(name, email, password)
             if user:
                 flash('Sign up successfully', 'info')
+
+                # triger activation email
+                if token:
+                    confirm_url = url_for(
+                        'confirm_email',
+                        token=token.token,
+                        _external=True
+                    )
+                    html = render_template(
+                        'activate.html', confirm_url=confirm_url
+                    )
+                    subject = 'Please confirm your email'
+                    send_email(user.email, subject, html)
                 return redirect(request.args.get('next') or url_for(all_urls['login']))
             else:
                 flash(error or 'Unknown error in Sign Up', 'error')
@@ -93,6 +106,25 @@ def signup():
         url_login=url_for(all_urls['login']),
         url_signup=url_for(all_urls['signup'])
     )
+
+
+@bp.route('/confirm_email/<token>', methods=['GET'])
+@login_required
+def confirm_email(token):
+    usvc = UserService()
+    try:
+        result, error = usvc.confirm_user(current_user, token)
+        if not result:
+            flash(error or 'Unknown error in comfirm user.', 'danger')
+        else:
+            user = usvc.load_user(current_user.email)
+            if user and user.confirmed_at:
+                flash('Account already confirmed. Please login.', 'success')
+            else:
+                flash('Something goes wrong when comfirming your account.', 'danger')
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    return redirect(url_for(all_urls['home']))
 
 
 @bp.route('/logout', methods=['GET', 'POST'])
@@ -119,4 +151,5 @@ def home():
             url_admin=url_admin
         )
     return redirect(url_for(all_urls['login']))
+
 ###############################################################################
