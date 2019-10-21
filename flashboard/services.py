@@ -3,10 +3,10 @@ import datetime
 from sqlalchemy import or_
 from flask_login import login_user, logout_user
 
+from config.rbac import DEFAULT_ROLE
 from .database import db_trasaction, save_item, BaseModel
 from .models import UserModel, RoleModel, RolesUsers, TokenModel
 from .utils import is_strong, prepare_for_hash, generate_random_salt
-from config.rbac import DEFAULT_ROLE
 
 TOKEN_USER_ACTIVATION = 0
 
@@ -133,6 +133,7 @@ class UserService(BaseService):
                 ))
 
                 msg = ''
+                token = None
                 try:
                     with db_trasaction() as txn:
                         # add user
@@ -143,16 +144,21 @@ class UserService(BaseService):
 
                         # generate activation token
                         tsvc = TokenService()
-                        if not tsvc.create(category=TOKEN_USER_ACTIVATION, user_id=user.id, duration=7200):
+                        token = tsvc.create(
+                            category=TOKEN_USER_ACTIVATION, user_id=user.id, duration=7200
+                        )
+                        if not token:
                             txn.exit_on_error('Failed to add activation token')
 
+                        # grant default role
                         if not self.grant_role(user, DEFAULT_ROLE):
                             txn.exit_on_error('Failed to grant default role')
                 except Exception as exp:
                     msg = str(exp)
                     user = None
-                return user, msg
-        return None, msg
+                    token = None
+                return user, token, msg
+        return None, None, msg
 
     def confirm_user(self, user_info, token):
         """ confirm user activation """
@@ -160,13 +166,11 @@ class UserService(BaseService):
         msg = ''
         result = True
         tsvc = TokenService()
-
         try:
             with db_trasaction() as txn:
                 user = self.load_raw_user(user_info)
                 if user is None:
                     txn.exit_on_error('Invalid user with activation token')
-
                 access_count = tsvc.verify(
                     TOKEN_USER_ACTIVATION, user.id, token
                 )
@@ -174,7 +178,6 @@ class UserService(BaseService):
                     txn.exit_on_error('Invalid activation token')
                 elif access_count != 1:
                     txn.exit_on_error('Used activation token')
-
                 user.actived = True
                 user.confirmed_at = datetime.datetime.utcnow()
                 if not txn.save_item(user):
@@ -182,7 +185,6 @@ class UserService(BaseService):
         except Exception as exp:
             msg = str(exp)
             result = False
-
         return result, msg
 
     def has_role(self, user_info, role):
@@ -271,7 +273,9 @@ class TokenService(BaseService):
         token.token = generate_random_salt(128)
         token.owner_id = user_id
 
-        return self.save_item(token)
+        if self.save_item(token):
+            return token
+        return None
 
     def get_last_one(self, category, owner_id):
         """ get last available token """
@@ -292,10 +296,9 @@ class TokenService(BaseService):
         """
         if not owner_id or not token:
             return None
-
         # retrieve stored token and check with provided one
         stored_token = self.get_last_one(category, owner_id)
-        if stored_token and stored_token == token:
+        if stored_token and stored_token.token == token:
             now = datetime.datetime.utcnow()
 
             if stored_token.first_access_on is None:
