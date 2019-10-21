@@ -9,7 +9,8 @@ from datetime import datetime
 from flask import Flask
 # from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_mail import Mail
+from flask_mail import Mail, Message
+
 # from flask_migrate import Migrate, MigrateCommand
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
@@ -147,4 +148,13 @@ def init_app(app):
     login_manager.login_view = 'login'
 
 
+def send_email(app, to, subject, template):
+    """ send email message """
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    return mail.send(msg)
 ###############################################################################
