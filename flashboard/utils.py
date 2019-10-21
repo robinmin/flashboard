@@ -19,7 +19,7 @@ def prepare_for_hash(password, public_salt, private_salt):
     return "{}@@{}@@{}".format(password, public_salt, private_salt)
 
 
-def enbase64(byte_str):
+def enbase64(byte_str, altchars=None):
     """
     Encode bytes/strings to base64.
     Args:
@@ -31,10 +31,10 @@ def enbase64(byte_str):
     # Python 3: base64.b64encode() expects type byte
     if isinstance(byte_str, str) and not PYTHON2:
         byte_str = bytes(byte_str, 'utf-8')
-    return base64.b64encode(byte_str)
+    return base64.b64encode(byte_str, altchars)
 
 
-def debase64(byte_str):
+def debase64(byte_str, altchars=None):
     """
     Decode base64 encoded bytes/strings.
     Args:
@@ -45,7 +45,7 @@ def debase64(byte_str):
     # Python 3: base64.b64decode() expects type byte
     if isinstance(byte_str, str) and not PYTHON2:
         byte_str = bytes(byte_str, 'utf-8')
-    return base64.b64decode(byte_str)
+    return base64.b64decode(byte_str, altchars)
 
 
 def generate_random_salt(byte_size=64):
@@ -56,7 +56,7 @@ def generate_random_salt(byte_size=64):
     Returns:
         - str of base64 encoded random bytes.
     """
-    return enbase64(os.urandom(byte_size))
+    return enbase64(os.urandom(byte_size), b'-_')
 
 
 def as_map(dataset, key_name, val_name):
