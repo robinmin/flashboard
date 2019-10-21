@@ -19,6 +19,9 @@ run:
 db:
 	FLASK_ENV="development" python3 -u manage.py db
 
+route:
+	FLASK_ENV="development" python3 -u manage.py list_routes
+
 shell:
 	FLASK_ENV="development" python3 -u manage.py shell
 

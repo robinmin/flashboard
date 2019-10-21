@@ -9,10 +9,9 @@
 | install     | install all python packages           |
 | test        | run pytest                            |
 | run         | run local http servr                  |
-| db          | db migration                          |
 | shell       | local flask shell                     |
 | recreate_db | recreate database schema and metadata |
-| migrate     | do db migration                       |
+| migrate     | db migration                          |
 
 #### Features
 

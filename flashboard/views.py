@@ -15,6 +15,7 @@ all_urls = {
     'logout': 'flashboard.logout',
     'signup': 'flashboard.signup',
     'home': 'flashboard.home',
+    'admin': 'admin.index',
 }
 
 
@@ -107,10 +108,15 @@ def logout():
 @rbac_module('home')
 def home():
     if current_user.is_authenticated:
+        url_admin = ''
+        if current_app.config['ENV'] == 'development':
+            url_admin = url_for(all_urls['admin'])
+
         return render_template(
             'home.html',
             title='Home',
-            url_logout=url_for(all_urls['logout'])
+            url_logout=url_for(all_urls['logout']),
+            url_admin=url_admin
         )
     return redirect(url_for(all_urls['login']))
 ###############################################################################

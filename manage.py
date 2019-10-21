@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 import os
 
+from flask import redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
+from flask_login import current_user
 from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
 
 # from redis import Redis
 # from rq import Connection, Queue, Worker
@@ -17,6 +21,35 @@ from flashboard.services import UserService, TokenService, TOKEN_USER_ACTIVATION
 from flashboard.models import *
 
 ###############################################################################
+
+
+class MyModelView(ModelView):
+
+    def is_accessible(self):
+        return current_user and current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('flashboard.login', next=request.url))
+
+
+def init_admin(app):
+    """ initialize admin component """
+
+    # set optional bootswatch theme
+    app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+    admin = Admin(app, name='flashboard', template_mode='bootstrap3')
+
+    # Add administrative views here
+    admin.add_view(MyModelView(RolesUsers, db.session, category='User'))
+    admin.add_view(MyModelView(RoleModel, db.session, category='User'))
+    admin.add_view(MyModelView(UserModel, db.session, category='User'))
+    admin.add_view(MyModelView(TokenModel, db.session, category='User'))
+
+    # add hyper link to return back to home page
+    admin.add_link(MenuLink(name='Home', url='/'))
+
+
 app = create_app()
 manager = Manager(app)
 
@@ -33,6 +66,9 @@ if app.config['ENV'] == 'development':
 
     manager.add_command('shell', Shell(make_context=make_shell_context))
     manager.add_command('db', MigrateCommand)
+
+    # enable admin component
+    init_admin(app)
 
     @manager.command
     def list_routes():
@@ -64,11 +100,6 @@ if app.config['ENV'] == 'development':
 def add_metadata_for_app(app):
     # Add meta data for user-role
     create_all_roles()
-    # with db_trasaction() as txn:
-    #     txn.save_item(RoleModel('anonymous', 'Anonymous User'))
-    #     txn.save_item(RoleModel('user',    'Normal User'))
-    #     txn.save_item(RoleModel('operator',  'Operator'))
-    #     txn.save_item(RoleModel('admin',     'Administrator'))
 
     with db_trasaction() as txn:
         # add test user
