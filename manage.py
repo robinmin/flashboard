@@ -105,16 +105,13 @@ def add_metadata_for_app(app):
         # add test user
         usvc = UserService()
 
-        user, error = usvc.register_user(
+        user, token, error = usvc.register_user(
             'robin', 'luonbin@hotmail.com', 'Test001')
         if user is None:
             app.logger.error(error or 'Unknown error in Sign Up')
         else:
-            # retrieve activation token for user confirmation
-            tsvc = TokenService()
-            act_token = tsvc.get_last_one(TOKEN_USER_ACTIVATION, user.id)
-
-            result, error = usvc.confirm_user(user, act_token)
+            # user confirmation
+            result, error = usvc.confirm_user(user, token.token)
             if not result:
                 app.logger.error(error or 'Unknown error in comfirm user.')
 
