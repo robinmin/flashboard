@@ -25,8 +25,8 @@ shell:
 recreate_db:
 	FLASK_ENV="development" python3 -u manage.py recreate_db
 
-init:
-	# python3 -u manage.py drop_all
-	# python3 -u manage.py init_db
+# init:
+# 	python3 -u manage.py drop_all
+# 	python3 -u manage.py init_db
 
 all: clean install test run

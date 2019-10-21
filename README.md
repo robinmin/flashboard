@@ -1,5 +1,18 @@
 ## README
 
+#### Tasks
+
+| Command     | Task description                      |
+| ----------- | ------------------------------------- |
+| clean       | clean up alll .pyc and log files      |
+| list        | list all tasks                        |
+| install     | install all python packages           |
+| test        | run pytest                            |
+| run         | run local http servr                  |
+| db          | db migration                          |
+| shell       | local flask shell                     |
+| recreate_db | recreate database schema and metadata |
+
 #### Features
 
 - Integrated with flask-login for user authentication.
