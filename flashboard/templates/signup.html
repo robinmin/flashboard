@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="hero is-primary is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+          <form action="{{ url_signup }}" class="box" method="post" autocomplete="off">
+            {{ form.csrf_token }}
+
+            <div class="field">
+              {{ form.name.label(class="label") }}
+              <div class="control has-icons-left">
+                {{ form.name(class="input", autocomplete="new-password") }}
+                <span class="icon is-small is-left">
+                  <i class="fa fa-user"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              {{ form.email.label(class="label") }}
+              <div class="control has-icons-left">
+                {{ form.email(class="input") }}
+                <span class="icon is-small is-left">
+                  <i class="fa fa-envelope"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              {{ form.password.label(class="label") }}
+              <div class="control has-icons-left">
+                {{ form.password(class="input", autocomplete="new-password") }}
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              {{ form.password2.label(class="label") }}
+              <div class="control has-icons-left">
+                {{ form.password2(class="input", autocomplete="new-password") }}
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="field is-grouped">
+              <div class="control"><a class="button is-text" href="{{ url_login }}">Login</a></div>
+              <div class="control">{{ form.submit(class="button is-success") }}</div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

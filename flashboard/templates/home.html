@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Home</h1>
+      <h2 class="subtitle">
+        Welcome back{% if current_user.is_authenticated %}, {{ current_user.name}} {% endif %}!
+      </h2>
+
+      <div class="field is-grouped">
+        <div class="control"><a class="button is-text" href="{{ url_logout }}">Logout</a></div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
