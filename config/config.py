@@ -28,7 +28,7 @@ class Config(object):
     # Flask-Mail settings
     # For smtp.gmail.com to work, you MUST set "Allow less secure apps" to ON in Google Accounts.
     # Change it in https://myaccount.google.com/security#connectedapps (near the bottom).
-    MAIL_DEFAULT_SENDER = 'luonbin@hotmail.com',
+    MAIL_DEFAULT_SENDER = 'luonbin@hotmail.com'
     MAIL_SERVER = 'localhost'
     MAIL_PORT = 1025
     MAIL_USE_SSL = False
