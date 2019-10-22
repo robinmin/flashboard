@@ -40,9 +40,11 @@ class db_trasaction():
             from flask import current_app
             current_app.logger.error(value)
 
-    def exit_on_error(self, msg):
-        """ raise exception to report error msg """
-        raise ValueError(msg or 'Unknown error')
+    def try_assert(self, condition, msg=None):
+        """ try asssert when condition is true """
+
+        if condition:
+            raise ValueError(msg or 'Unknown error')
 
     def save_item(self, obj_item):
         """ Save the item into relevant database table """
