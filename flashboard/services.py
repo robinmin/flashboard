@@ -54,20 +54,22 @@ class UserService(BaseService):
         else:
             return None
 
-    def load_valid_user(self, user_info, password):
+    def load_valid_user(self, user_info, password, include_inactive=False):
         """ load valid user information and check password """
 
         user = self.load_raw_user(user_info)
         if user:
             from flask import current_app
             public_salt = current_app.config['SECURITY_PASSWORD_SALT']
-            if user.is_active and user.verify_password(prepare_for_hash(
+            if not user.verify_password(prepare_for_hash(
                 password, public_salt, user.private_salt
             )):
-                return user
+                return None
+
+            return user if user.is_active or include_inactive else None
         return None
 
-    def login_user(self, user_info, remember, login_ip):
+    def login_user(self, user_info, remember, login_ip, force=False):
         """ process user login information """
 
         user = self.load_raw_user(user_info)
@@ -94,7 +96,7 @@ class UserService(BaseService):
         user.login_count = user.login_count + 1
 
         if self.save_item(user):
-            return login_user(user, remember=remember)
+            return login_user(user, remember=remember, force=force)
         return None
 
     def logout_user(self, user):
@@ -298,7 +300,10 @@ class TokenService(BaseService):
             return None
         # retrieve stored token and check with provided one
         stored_token = self.get_last_one(category, owner_id)
-        if stored_token and stored_token.token == token:
+        act_token = stored_token.token if stored_token else ''
+        if isinstance(act_token, bytes):
+            act_token = act_token.decode('utf-8')
+        if stored_token and act_token == token:
             now = datetime.datetime.utcnow()
 
             if stored_token.first_access_on is None:
