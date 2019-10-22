@@ -1,4 +1,4 @@
-from wtforms import StringField, BooleanField, PasswordField, SubmitField
+from wtforms import StringField, BooleanField, PasswordField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length, Email
 from flask_wtf import FlaskForm
 
@@ -10,6 +10,7 @@ class LoginForm(FlaskForm):
     #     DataRequired(message='User Name is required'),
     #     Length(3, 64),
     # ])
+    next = HiddenField('next')
     email = StringField('Email', validators=[
         DataRequired(message='Email is required'),
         Length(3, 64),
