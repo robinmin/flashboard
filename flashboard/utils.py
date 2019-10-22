@@ -56,7 +56,7 @@ def generate_random_salt(byte_size=64):
     Returns:
         - str of base64 encoded random bytes.
     """
-    return enbase64(os.urandom(byte_size), b'-_')
+    return enbase64(os.urandom(byte_size), b'-_').decode('utf-8')
 
 
 def as_map(dataset, key_name, val_name):
