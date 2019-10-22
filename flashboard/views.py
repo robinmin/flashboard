@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, abort, jsonify, current_app, request, redirect, url_for, flash
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_url
 
 from .forms import LoginForm, SignupForm
 from .services import UserService
@@ -14,7 +14,9 @@ all_urls = {
     'login': 'flashboard.login',
     'logout': 'flashboard.logout',
     'signup': 'flashboard.signup',
+    'confirm_email': 'flashboard.confirm_email',
     'home': 'flashboard.home',
+
     'admin': 'admin.index',
 }
 
@@ -39,19 +41,23 @@ def login():
         return redirect(url_for(all_urls['home']))
 
     form = LoginForm()
+    next = request.form.get('next', None)
     if request.method == 'POST' and form.validate_on_submit():
         email = request.form.get('email', None)
         password = request.form.get('password', None)
         remember_me = 'remember_me' in request.form
 
         usvc = UserService()
-        user = usvc.load_valid_user(email, password)
+
+        # special process for confirm_email
+        include_inactive = allow_inactive_login(next)
+        user = usvc.load_valid_user(email, password, include_inactive)
         if user:
             usvc.login_user(user, remember=remember_me, login_ip=request.environ.get(
                 'HTTP_X_REAL_IP', request.remote_addr
-            ))
+            ), force=include_inactive)
             # flash('Logged in successfully')
-            return redirect(request.args.get('next') or url_for(all_urls['home']))
+            return redirect(next or url_for(all_urls['home']))
         else:
             flash('Invalid username or password or inactive user', 'error')
     return render_template(
@@ -59,8 +65,26 @@ def login():
         title='Sign In',
         form=form,
         url_login=url_for(all_urls['login']),
-        url_signup=url_for(all_urls['signup'])
+        url_signup=url_for(all_urls['signup']),
+        next=request.args.get('next'),
     )
+
+
+def allow_inactive_login(next):
+    """ helper function to detect current action is allow inactive user login or not """
+
+    if not next:
+        return False
+
+    url_parts = next.split('/')
+    if not isinstance(url_parts, list) or len(url_parts) < 3:
+        return False
+
+    url_prefix = '/'.join(url_parts[0:3])
+    valid_urls = [
+        '/sys/confirm_email',
+    ]
+    return url_prefix in valid_urls
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
@@ -80,20 +104,29 @@ def signup():
             usvc = UserService()
             user, token, error = usvc.register_user(name, email, password)
             if user:
-                flash('Sign up successfully', 'info')
-
                 # triger activation email
                 if token:
-                    confirm_url = url_for(
-                        'confirm_email',
-                        token=token.token,
-                        _external=True
-                    )
+                    confirm_url = login_url(
+                        login_view=url_for(
+                            all_urls['login'],
+                            _external=True
+                        ),
+                        next_url=url_for(
+                            all_urls['confirm_email'],
+                            token=token.token
+                        ))
                     html = render_template(
                         'activate.html', confirm_url=confirm_url
                     )
                     subject = 'Please confirm your email'
-                    send_email(user.email, subject, html)
+                    send_email(current_app, user.email, subject, html)
+
+                    flash(
+                        'Activation email has been sent to your email box. Please confirm your email first.',
+                        'info'
+                    )
+                else:
+                    flash('Sign up successfully', 'info')
                 return redirect(request.args.get('next') or url_for(all_urls['login']))
             else:
                 flash(error or 'Unknown error in Sign Up', 'error')
@@ -111,6 +144,9 @@ def signup():
 @bp.route('/confirm_email/<token>', methods=['GET'])
 @login_required
 def confirm_email(token):
+    if not current_user.is_authenticated:
+        return current_app.login_manager.unauthorized()
+
     usvc = UserService()
     try:
         result, error = usvc.confirm_user(current_user, token)
@@ -119,19 +155,19 @@ def confirm_email(token):
         else:
             user = usvc.load_user(current_user.email)
             if user and user.confirmed_at:
-                flash('Account already confirmed. Please login.', 'success')
+                flash('Account already confirmed. Please login.', 'info')
             else:
                 flash('Something goes wrong when comfirming your account.', 'danger')
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
-    return redirect(url_for(all_urls['home']))
+    return redirect(url_for(all_urls['logout']))
 
 
 @bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     if current_user.is_authenticated:
         UserService().logout_user(current_user)
-        flash('Logout successfully', 'info')
+        # flash('Logout successfully', 'info')
 
     return redirect(url_for(all_urls['login']))
 
