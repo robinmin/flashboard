@@ -75,3 +75,11 @@ def flatten(li):
     """ convert nested list to a flat list """
 
     return sum(([x] if not isinstance(x, list) else flatten(x) for x in li), [])
+
+
+def strip_space(data):
+    return data.strip() if data else None
+
+
+def strip_space_lower(data):
+    return data.strip().lower() if data else None
