@@ -139,22 +139,25 @@ class UserService(BaseService):
                 try:
                     with db_trasaction() as txn:
                         # add user
-                        if not txn.save_item(user):
-                            txn.exit_on_error(
-                                'Failed to add user into user table'
-                            )
+                        txn.try_assert(
+                            not txn.save_item(user),
+                            'Failed to add user into user table'
+                        )
 
                         # generate activation token
                         tsvc = TokenService()
                         token = tsvc.create(
                             category=TOKEN_USER_ACTIVATION, user_id=user.id, duration=7200
                         )
-                        if not token:
-                            txn.exit_on_error('Failed to add activation token')
+                        txn.try_assert(
+                            not token, 'Failed to add activation token'
+                        )
 
                         # grant default role
-                        if not self.grant_role(user, DEFAULT_ROLE):
-                            txn.exit_on_error('Failed to grant default role')
+                        txn.try_assert(
+                            not self.grant_role(user, DEFAULT_ROLE),
+                            'Failed to grant default role'
+                        )
                 except Exception as exp:
                     msg = str(exp)
                     user = None
@@ -171,19 +174,27 @@ class UserService(BaseService):
         try:
             with db_trasaction() as txn:
                 user = self.load_raw_user(user_info)
-                if user is None:
-                    txn.exit_on_error('Invalid user with activation token')
+                txn.try_assert(
+                    user is None,
+                    'Invalid user with activation token'
+                )
                 access_count = tsvc.verify(
                     TOKEN_USER_ACTIVATION, user.id, token
                 )
-                if access_count is None:
-                    txn.exit_on_error('Invalid activation token')
-                elif access_count != 1:
-                    txn.exit_on_error('Used activation token')
+                txn.try_assert(
+                    access_count is None,
+                    'Invalid activation token'
+                )
+                txn.try_assert(
+                    access_count != 1,
+                    'Used activation token'
+                )
                 user.actived = True
                 user.confirmed_at = datetime.datetime.utcnow()
-                if not txn.save_item(user):
-                    txn.exit_on_error('Failed to update actived flag')
+                txn.try_assert(
+                    not txn.save_item(user),
+                    'Failed to update actived flag'
+                )
         except Exception as exp:
             msg = str(exp)
             result = False
