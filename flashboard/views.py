@@ -24,7 +24,8 @@ all_urls = {
 @login_manager.user_loader
 def user_loader(user_id):
     """ Given *user_id*, return the associated User object """
-    return UserService().load_user(user_id)
+    user = UserService().load_user(user_id)
+    return user if user and user.actived else None
 
 
 @login_manager.unauthorized_handler
@@ -52,14 +53,16 @@ def login():
         # special process for confirm_email
         include_inactive = allow_inactive_login(next)
         user = usvc.load_valid_user(email, password, include_inactive)
-        if user:
-            usvc.login_user(user, remember=remember_me, login_ip=request.environ.get(
-                'HTTP_X_REAL_IP', request.remote_addr
-            ), force=include_inactive)
-            # flash('Logged in successfully')
+        login_ip = request.environ.get(
+            'HTTP_X_REAL_IP', request.remote_addr
+        )
+
+        # update user login information
+        if user and usvc.login_user(user, remember=remember_me, login_ip=login_ip, force=include_inactive):
             return redirect(next or url_for(all_urls['home']))
         else:
             flash('Invalid username or password or inactive user', 'error')
+            # return redirect(next or url_for(all_urls['login']))
     return render_template(
         'login.html',
         title='Sign In',
