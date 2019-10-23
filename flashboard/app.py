@@ -78,7 +78,17 @@ def create_app(extra_config_settings={}):
     # register all relevant blueprints
     with app.app_context():
         from .views import bp as bp_sys
+        from .factories import api, bp as bp_api
+        from .apis import auth_ns
+
+        # avoid to check CSRF on APIs
+        csrf_protect.exempt(bp_api)
+
+        # add namespaces for API
+        api.add_namespace(auth_ns, path='/user')
+
         app.register_blueprint(bp_sys, url_prefix='/sys')
+        app.register_blueprint(bp_api, url_prefix='/api')
 
         # Initialize Global db and create all tables
         init_db(app)
