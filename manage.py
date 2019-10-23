@@ -17,7 +17,7 @@ from flashboard.app import create_app
 from flashboard.views import login
 from flashboard.database import create_all_tables, db_trasaction
 from flashboard.rbac import create_all_roles
-from flashboard.services import UserService, TokenService, TOKEN_USER_ACTIVATION
+from flashboard.services import UserService, TokenService
 from flashboard.models import *
 
 ###############################################################################
