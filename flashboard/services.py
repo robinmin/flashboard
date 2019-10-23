@@ -1,4 +1,6 @@
+import jwt
 import datetime
+import random
 
 from sqlalchemy import or_
 from flask_login import login_user, logout_user
@@ -6,9 +8,7 @@ from flask_login import login_user, logout_user
 from config.rbac import DEFAULT_ROLE
 from .database import db_trasaction, save_item, BaseModel
 from .models import UserModel, RoleModel, RolesUsers, TokenModel
-from .utils import is_strong, prepare_for_hash, generate_random_salt
-
-TOKEN_USER_ACTIVATION = 0
+from .utils import is_strong, prepare_for_hash, generate_random_salt, encode_jwt_token, decode_jwt_token
 
 
 class BaseService(object):
@@ -147,7 +147,9 @@ class UserService(BaseService):
                         # generate activation token
                         tsvc = TokenService()
                         token = tsvc.create(
-                            category=TOKEN_USER_ACTIVATION, user_id=user.id, duration=7200
+                            category=TokenService.TOKEN_USER_ACTIVATION,
+                            user_id=user.id,
+                            duration=7200
                         )
                         txn.try_assert(
                             not token, 'Failed to add activation token'
@@ -165,7 +167,7 @@ class UserService(BaseService):
                 return user, token, msg
         return None, None, msg
 
-    def confirm_user(self, user_info, token):
+    def confirm_user(self, user_info, act_token):
         """ confirm user activation """
 
         msg = ''
@@ -178,15 +180,15 @@ class UserService(BaseService):
                     user is None,
                     'Invalid user with activation token'
                 )
-                access_count = tsvc.verify(
-                    TOKEN_USER_ACTIVATION, user.id, token
+                token, rsp_msg = tsvc.verify(
+                    TokenService.TOKEN_USER_ACTIVATION, user.id, act_token
                 )
                 txn.try_assert(
-                    access_count is None,
-                    'Invalid activation token'
+                    token is None or token.access_count is None,
+                    rsp_msg or 'Invalid activation token'
                 )
                 txn.try_assert(
-                    access_count != 1,
+                    token.access_count != 1,
                     'Used activation token'
                 )
                 user.actived = True
@@ -273,18 +275,33 @@ class UserService(BaseService):
 
 
 class TokenService(BaseService):
+    # user configuration token
+    TOKEN_USER_ACTIVATION = 0
+
+    # JWT access token
+    TOKEN_JWT_ACCESS = 1
+
+    # JWT refresh token
+    TOKEN_JWT_REFRESH = 2
+
     def __init__(self):
         self.klass = TokenModel
 
-    def create(self, category, user_id, duration=7200):
+    def create(self, category, user_id, duration=7200, random_seed=0):
         """ generate new token """
         token = self.klass()
         token.create_on = datetime.datetime.utcnow()
         token.expiry_on = token.create_on + \
             datetime.timedelta(seconds=duration)
         token.category = category
-        token.token = generate_random_salt(128)
         token.owner_id = user_id
+        token.random_seed = random_seed
+
+        # generate token
+        if category == self.TOKEN_JWT_ACCESS or category == self.TOKEN_JWT_REFRESH:
+            token.token = encode_jwt_token(user_id, duration, random_seed)
+        else:
+            token.token = generate_random_salt(128)
 
         if self.save_item(token):
             return token
@@ -305,10 +322,21 @@ class TokenService(BaseService):
     def verify(self, category, owner_id, token):
         """
             verify provided token and retrieve the account counte.
-            It will return the access counter if token is valid, otherwise return None.
+            It will return the token object if token is valid, otherwise return None.
         """
-        if not owner_id or not token:
-            return None
+
+        if not token:
+            return None, 'Invalid token'
+
+        if owner_id is None and category in [self.TOKEN_JWT_ACCESS, self.TOKEN_JWT_REFRESH]:
+            # decode owner_id from provided token
+            payload, msg = decode_jwt_token(token)
+            if payload and 'uid' in payload:
+                owner_id = int(payload['uid'])
+
+        if not owner_id:
+            return None, 'Invalid owner_id'
+
         # retrieve stored token and check with provided one
         stored_token = self.get_last_one(category, owner_id)
         act_token = stored_token.token if stored_token else ''
@@ -322,5 +350,66 @@ class TokenService(BaseService):
             stored_token.last_access_on = now
             stored_token.access_count = (stored_token.access_count or 0) + 1
             if self.save_item(stored_token):
-                return stored_token.access_count
-        return None
+                return stored_token, ''
+        return None, 'Invalid or expired token'
+
+    def purge(self, category, owner_id, token):
+        """ purge current access token if any valid token has been provided """
+
+        result = False
+        with db_trasaction() as txn:
+            if self.klass.query.filter(
+                self.klass.category == category,
+                self.klass.owner_id == owner_id,
+                self.klass.token == token
+            ).delete() == 1:
+                result = True
+        return result
+
+    def generate_auth_tokens(self, user_id):
+        """ generate access token and refresh token """
+
+        # generate random integer as the pair refference
+        random.seed(datetime.datetime.utcnow())
+        random_seed = random.randint(0, 65535)
+
+        access_token = self.create(
+            self.TOKEN_JWT_ACCESS, user_id, 115 * 60, random_seed
+        )
+        refresh_token = self.create(
+            self.TOKEN_JWT_REFRESH, user_id, 30 * 24 * 60 * 60, random_seed
+        )
+        return access_token.token if access_token else None, refresh_token.token if refresh_token else None
+
+    def purge_auth_tokens(self, token):
+        """ purge access token and refresh token """
+
+        # sanity check
+        if token is None or token.__class__.__name__ != self.klass.__name__:
+            return None
+        if token.token is None or token.category != self.TOKEN_JWT_REFRESH:
+            return None
+
+        # cache random seed
+        random_seed = token.random_seed
+        owner_id = token.owner_id
+
+        result = True
+        with db_trasaction() as txn:
+            # purge refresh token
+            if self.klass.query.filter(
+                self.klass.category == self.TOKEN_JWT_REFRESH,
+                self.klass.owner_id == owner_id,
+                self.klass.token == token.token
+            ).delete() != 1:
+                result = False
+
+            # purge access token
+            if self.klass.query.filter(
+                self.klass.category == self.TOKEN_JWT_ACCESS,
+                self.klass.owner_id == owner_id,
+                self.klass.random_seed == random_seed
+            ).delete() != 1:
+                result = False
+
+        return result
