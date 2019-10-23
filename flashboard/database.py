@@ -67,7 +67,7 @@ def save_item(obj_item):
         rst = False
 
         from flask import current_app
-        current_app.logger.error(exp)
+        current_app.logger.error(str(exp))
 
     return rst
 
@@ -80,7 +80,7 @@ def init_db(app, db_uri=None):
         db_uri = app.config['SQLALCHEMY_DATABASE_URI']
 
     if engine is None:
-        engine = create_engine(db_uri, convert_unicode=True)
+        engine = create_engine(db_uri)
     if db_session is None:
         db_session = scoped_session(sessionmaker(
             autocommit=False,
@@ -112,7 +112,7 @@ def create_all_tables(app, drop_all=False):
     global engine
     if engine is None:
         engine = create_engine(
-            app.config['SQLALCHEMY_DATABASE_URI'], convert_unicode=True
+            app.config['SQLALCHEMY_DATABASE_URI']
         )
 
     if drop_all:
