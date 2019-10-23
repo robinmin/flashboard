@@ -122,7 +122,8 @@ class TokenModel(BaseModel):
     access_count = Column(Integer(), default=0, nullable=False)
 
     category = Column(Integer(), default=0, nullable=False)
-    token = Column(String(172), nullable=False, unique=True)
+    token = Column(String(256), nullable=False, unique=True)
+    random_seed = Column(Integer(), default=0, nullable=True)
 
     owner_id = Column('user_id', Integer(), ForeignKey('users.id'))
 
