@@ -23,10 +23,11 @@
 - Support RBAC(Role Based Access Control).
 - Integrated with [bulma](https://bulma.io) for the default views.
 - Integrate with Flask-Migrate.
+- Add Flash-Mail support for user email activation.
+- Integrate with Flask-RESTPLUS and swagger-UI.
 
 #### TODOs
 
-- [ ] Integrate with Flask-RESTPLUS and swagger-UI.
 
 #### Issues
 
