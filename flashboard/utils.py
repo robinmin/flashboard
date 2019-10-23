@@ -1,7 +1,11 @@
 import os
 import sys
 import base64
+import jwt
+import datetime
 from string import ascii_lowercase, ascii_uppercase, digits
+
+from flask import current_app, request
 
 PYTHON2 = sys.version_info < (3, 0)
 
@@ -83,3 +87,62 @@ def strip_space(data):
 
 def strip_space_lower(data):
     return data.strip().lower() if data else None
+
+
+def encode_jwt_token(user_id, duration, random_seed=0):
+    """ generate JWT token
+
+    The JWT Token's payload contain:
+        'uid' (user id),
+        'exp' (expiration date of the token),
+        'iat' (the time the token is generated),
+        'rds' (random seed),
+    """
+
+    now = datetime.datetime.utcnow()
+    return jwt.encode(
+        {
+            'uid': user_id,
+            'exp': now + datetime.timedelta(seconds=duration),
+            'iat': now,
+            'rds': random_seed
+        },
+        current_app.config['SECRET_KEY'],
+        algorithm='HS512'
+    ).decode('utf-8')
+
+
+def decode_jwt_token(token):
+    """ verify JWT token """
+
+    payload = None
+    msg = ''
+
+    try:
+        payload = jwt.decode(
+            token,
+            current_app.config['SECRET_KEY'],
+            algorithm='HS512'
+        )
+    except jwt.ExpiredSignatureError as exp:
+        msg = str(exp)
+    except (jwt.DecodeError, jwt.InvalidTokenError) as exp:
+        msg = str(exp)
+    except Exception as exp:
+        msg = str(exp)
+
+    return payload, msg
+
+
+def extract_authorization_from_header():
+    """ extract authorization from HTTP header """
+
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return None
+
+    access_token = auth_header.strip().split(' ')
+    if access_token is None or len(access_token) <= 0:
+        return None
+
+    return access_token[len(access_token)-1]
