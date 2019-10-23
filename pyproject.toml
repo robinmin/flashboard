@@ -17,6 +17,8 @@ passlib = "^1.7"
 Flask-Admin = "^1.5"
 flask-mail = "^0.9.1"
 gunicorn = "^19.9"
+flask-restplus = "^0.13.0"
+pyjwt = "^1.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
