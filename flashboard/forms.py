@@ -6,7 +6,13 @@ from .utils import strip_space, strip_space_lower
 ###############################################################################
 
 
-class LoginForm(FlaskForm):
+class FormMixin(object):
+    def skip_csrf_validation(self):
+        if hasattr(self, '_fields') and 'csrf_token' in self._fields:
+            del self._fields['csrf_token']
+
+
+class LoginForm(FlaskForm, FormMixin):
     # The first parameter is for form label
     # username = StringField('User Name', validators=[
     #     DataRequired(message='User Name is required'),
