@@ -17,6 +17,7 @@ api = Api(
     bp,
     title='Flashboard API',
     version='1.0',
+    # doc=False,  # disable Swagger UI entirely
     description='Flashboard API'
 )
 
