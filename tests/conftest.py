@@ -15,10 +15,17 @@ def app():
     """Create and configure a new app instance for each test."""
     # create a temporary file to isolate the database for each test
     db_fd, db_path = tempfile.mkstemp()
+
     # create the app with common test config
     app = create_app({
+        # force into the testing model
         'TESTING': True,
+
+        # leverage temp file system as the SQLite database
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
+
+        # Disable CSRF tokens in the Forms (only valid for testing purposes!)
+        'WTF_CSRF_ENABLED': False
     })
 
     # create the database and load test data
@@ -92,31 +99,46 @@ class ApiProxy(object):
         self._client = client
         self.access_token = None
 
+    def _api_get(self, url, with_token=True):
+        headers = {
+            'Accept': 'application/json',
+        }
+        if with_token:
+            headers['Authorization'] = 'Bearer ' + (self.access_token or '')
+
+        return self._client.get(url, headers=headers)
+
+    def _api_post(self, url, data={}, with_token=True):
+        headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+        if with_token:
+            headers['Authorization'] = 'Bearer ' + (self.access_token or '')
+
+        return self._client.post(url, data=json.dumps(data), headers=headers)
+
     #############################
     #
     # API proxy
     #
     #############################
     def login(self, email, password):
-        return post_json(self._client, self.api_url_login, {
+        return self._api_post(self.api_url_login, {
             'email': 'luonbin@hotmail.com',
             'password': 'Test001'
-        })
+        }, with_token=False)
 
     def logout(self):
-        return self._client.get(self.api_url_logout, headers={
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + (self.access_token or '')}
-        )
+        return self._api_get(self.api_url_logout, with_token=True)
 
     def refresh(self, refresh_token):
-        return post_json(self._client, self.api_url_refresh, {
+        return self._api_post(self.api_url_refresh, {
             'refresh_token': refresh_token
-        })
+        }, with_token=False)
 
     def register(self, name, email, password):
-        return post_json(self._client, self.api_url_register, {
+        return self._api_post(self.api_url_register, data={
             'name': name,
             'email': email,
             'password': password,
@@ -127,6 +149,7 @@ class ApiProxy(object):
     # Helper functions here
     #
     #############################
+
     def assert_dump(self, resp):
         print('=======================================>>')
         print('resp.status_code : ', resp.status_code)
@@ -176,7 +199,7 @@ class ApiProxy(object):
 
         return json_resp['access_token'], json_resp['refresh_token']
 
-    def assert_normal_logout(self, resp):
+    def assert_normal_action(self, resp):
         assert resp and resp.status_code == 200
 
         json_resp = resp.get_json()
@@ -193,15 +216,13 @@ class ApiProxy(object):
 
         return json_resp['access_token'], json_resp['refresh_token']
 
+    def assert_invalid_register_exist(self, resp):
+        assert resp and resp.status_code == 401
 
-def post_json(client, url, json_dict):
-    """ Send dictionary json_dict as a json to the specified url """
-    return client.post(url, data=json.dumps(json_dict), content_type='application/json')
-
-
-def json_of_response(response):
-    """ Decode json from response """
-    return json.loads(response.data.decode('utf8'))
+        json_resp = resp.get_json()
+        assert json_resp and 'message' in json_resp \
+            and json_resp['message'] == 'User name or email is already exist', \
+            'Invalid username or email'
 
 
 def add_metadata_for_app(app):
