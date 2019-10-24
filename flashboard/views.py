@@ -106,33 +106,30 @@ def signup():
         if password and password2 and password == password2:
             usvc = UserService()
             user, token, error = usvc.register_user(name, email, password)
-            if user:
+            if user and token:
                 # triger activation email
-                if token:
-                    confirm_url = login_url(
-                        login_view=url_for(
-                            all_urls['login'],
-                            _external=True
-                        ),
-                        next_url=url_for(
-                            all_urls['confirm_email'],
-                            token=token.token
-                        ))
-                    html = render_template(
-                        'activate.html', confirm_url=confirm_url
-                    )
-                    subject = 'Please confirm your email'
-                    send_email(current_app, user.email, subject, html)
+                confirm_url = login_url(
+                    login_view=url_for(
+                        all_urls['login'],
+                        _external=True
+                    ),
+                    next_url=url_for(
+                        all_urls['confirm_email'],
+                        token=token.token
+                    ))
+                html = render_template(
+                    'activate.html', confirm_url=confirm_url
+                )
+                subject = 'Please confirm your email'
+                send_email(current_app, user.email, subject, html)
 
-                    flash(
-                        'Activation email has been sent to your email box. Please confirm your email first.',
-                        'info'
-                    )
-                else:
-                    flash('Sign up successfully', 'info')
+                flash(
+                    'Activation email has been sent to your email box. Please confirm your email first.',
+                    'info'
+                )
                 return redirect(request.args.get('next') or url_for(all_urls['login']))
             else:
-                flash(error or 'Unknown error in Sign Up', 'error')
+                flash(error or 'Unknown error in user registration', 'error')
         else:
             flash('Both passwords must be the same.', 'error')
     return render_template(
