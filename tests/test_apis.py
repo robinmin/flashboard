@@ -1,7 +1,6 @@
 import pytest
 
 from flashboard.models import UserModel, RolesUsers
-from .conftest import post_json, json_of_response
 
 
 def test_login(client, api):
@@ -34,7 +33,7 @@ def test_login(client, api):
         api.access_token = new_access_token
     finally:
         # normal logout
-        api.assert_normal_logout(api.logout())
+        api.assert_normal_action(api.logout())
 
 
 def test_logout(client, api):
@@ -60,7 +59,7 @@ def test_logout(client, api):
         ###########################################
     finally:
         # normal logout
-        api.assert_normal_logout(api.logout())
+        api.assert_normal_action(api.logout())
 
     # logout again after logout
     api.assert_invalid_token(api.logout())
@@ -99,7 +98,7 @@ def test_refresh(client, api):
         api.access_token = new_access_token
     finally:
         # normal logout
-        api.assert_normal_logout(api.logout())
+        api.assert_normal_action(api.logout())
 
 
 def test_register(client, api):
@@ -124,6 +123,26 @@ def test_register(client, api):
         count_user = UserModel.query.count()
         count_ru = RolesUsers.query.count()
 
+        api.assert_invalid_register_exist(api.register(
+            'robin', 'luonbin@hotmail.com', 'Test001'
+        ))
+
+        new_count_user = UserModel.query.count()
+        new_count_ru = RolesUsers.query.count()
+        assert new_count_user == count_user and new_count_ru == count_ru, \
+            'No user has been registered if any invalid data'
+
+        api.assert_normal_action(api.register(
+            'test001', 'test001@hotmail.com', 'Test001'
+        ))
+        api.assert_normal_action(api.register(
+            'test002', 'test002@hotmail.com', 'Test001'
+        ))
+
+        new_count_user = UserModel.query.count()
+        new_count_ru = RolesUsers.query.count()
+        assert new_count_user == count_user + 2 and new_count_ru == count_ru + 2, \
+            '# of users have been registered into database'
     finally:
         # normal logout
-        api.assert_normal_logout(api.logout())
+        api.assert_normal_action(api.logout())
