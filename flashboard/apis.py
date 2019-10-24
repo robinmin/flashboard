@@ -79,6 +79,7 @@ class Login(Resource):
             'password': password,
             'remember_me': remember_me,
         })
+        form.skip_csrf_validation()
 
         status_code = 200
         msg = ''
@@ -188,6 +189,7 @@ class Register(Resource):
             'password': password,
             'password2': password,
         })
+        form.skip_csrf_validation()
 
         status_code = 200
         msg = ''
