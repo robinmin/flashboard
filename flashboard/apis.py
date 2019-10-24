@@ -116,6 +116,7 @@ class Login(Resource):
 @auth_ns.route('/logout')
 class Logout(Resource):
     @auth_ns.response(200, 'Success', AppDTO.return_message)
+    @auth_ns.doc(security='JWT')
     @token_required
     def get(self):
         """ API interface for user logout """
@@ -136,6 +137,7 @@ class Refresh(Resource):
     @auth_ns.expect(AppDTO.refresh_details, validate=True)
     @auth_ns.response(200, 'Success', AppDTO.return_token)
     @auth_ns.response(401, 'Invalid refresh token')
+    @auth_ns.doc(security='JWT')
     def post(self):
         """ API interface for refresh access token """
 
@@ -170,6 +172,7 @@ class Register(Resource):
     @auth_ns.expect(AppDTO.register_details, validate=True)
     @auth_ns.marshal_with(AppDTO.return_message)
     @auth_ns.response(401, 'username or password incorrect')
+    @auth_ns.doc(security='JWT')
     @token_required
     def post(self):
         """ API interface for user registration """
