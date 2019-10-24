@@ -9,8 +9,8 @@ class AppDTO:
     })
 
     auth_details = api.model('auth_details', {
-        'email': fields.String(required=True, description='The email address'),
-        'password': fields.String(required=True, description='The user password '),
+        'email': fields.String(required=True, description='email address'),
+        'password': fields.String(required=True, description='user password '),
     })
 
     return_token = api.model('return_token', {
@@ -20,4 +20,10 @@ class AppDTO:
 
     refresh_details = api.model('refresh_details', {
         'refresh_token': fields.String(required=True, description='API refresh token'),
+    })
+
+    register_details = api.model('register_details', {
+        'name': fields.String(required=True, description='user name'),
+        'email': fields.String(required=True, description='email address'),
+        'password': fields.String(required=True, description='password'),
     })
