@@ -2,14 +2,13 @@ from wtforms import StringField, BooleanField, PasswordField, SubmitField, Hidde
 from wtforms.validators import DataRequired, Length, Email
 from flask_wtf import FlaskForm
 
-from .utils import strip_space, strip_space_lower
+from .utils import strip_space, strip_space_lower, flatten
 ###############################################################################
 
 
 class FormMixin(object):
-    def skip_csrf_validation(self):
-        if hasattr(self, '_fields') and 'csrf_token' in self._fields:
-            del self._fields['csrf_token']
+    def extract_errors(self, sep='; '):
+        return sep.join(flatten(self.errors.values())) if self.errors and len(self.errors) > 0 else ''
 
 
 class LoginForm(FlaskForm, FormMixin):
@@ -32,7 +31,7 @@ class LoginForm(FlaskForm, FormMixin):
     submit = SubmitField('Login')
 
 
-class SignupForm(FlaskForm):
+class SignupForm(FlaskForm, FormMixin):
     # The first parameter is for form label
     name = StringField('User Name', validators=[
         DataRequired(message='User Name is required'),
