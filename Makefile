@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db shell recreate_db migrate all
+.PHONY: clean list install test run db model shell recreate_db migrate all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -11,13 +11,17 @@ install:
 	poetry install
 
 test:
-	poetry run pytest -s tests
+	# poetry run pytest -s tests
+	poetry run pytest tests/test_apis.py|grep -v .venv/lib/python3.7/site-packages/|grep -v DeprecationWarning
 
 run:
 	FLASK_ENV="development" python3 -u manage.py runserver
 
 db:
 	FLASK_ENV="development" python3 -u manage.py db
+
+model:
+	flask-sqlacodegen sqlite:////tmp/test.db|sed -e"s/\(Base\)/BaseModel/"
 
 route:
 	FLASK_ENV="development" python3 -u manage.py list_routes
