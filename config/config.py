@@ -71,6 +71,16 @@ class Config(object):
         '"Admin One" <admin1@gmail.com>',
     ]
 
+    # swagger-ui configuration
+    # Expand the Swagger UI when it is loaded: list or full
+    # SWAGGER_UI_DOC_EXPANSION = 'list'
+
+    # Globally enable validating
+    # RESTPLUS_VALIDATE = True
+
+    # Enable or disable the mask field, by default X-Fields
+    RESTPLUS_MASK_SWAGGER = False
+
 
 class ProductionConfig(Config):
     """ specified configuration for production environment """
