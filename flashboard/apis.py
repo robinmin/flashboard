@@ -173,7 +173,7 @@ class Register(Resource):
     @token_required
     def post(self):
         """ API interface for user registration """
-        print('--------------------------->4')
+
         if not current_user.is_authenticated:
             return auth_ns.abort(401, 'Invalid user')
 
