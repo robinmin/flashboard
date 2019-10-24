@@ -13,11 +13,20 @@ from .services import UserService, TokenService
 bp = Blueprint('flashboard-api', __name__)
 
 # API instance
+authorizations = {
+    'JWT': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
+        'description': 'JWT authorization key which must be started with "Bearer "'
+    }
+}
 api = Api(
     bp,
     title='Flashboard API',
     version='1.0',
     # doc=False,  # disable Swagger UI entirely
+    authorizations=authorizations,
     description='Flashboard API'
 )
 
@@ -69,11 +78,9 @@ def token_required(func):
                     login_user(user)
                 return func(*args, **kwargs)
             else:
-                api_abort(
-                    403, 'Valid API Token required ({})'.format(
-                        msg or 'Invalid token'
-                    )
-                )
+                api_abort(403, 'Valid API Token required ({})'.format(
+                    msg or 'Invalid token'
+                ))
         else:
             api_abort(403, 'Valid API Token required (Invalid header)')
 
