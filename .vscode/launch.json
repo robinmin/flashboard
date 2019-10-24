@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: pytest",
+      "type": "python",
+      "request": "launch",
+      "program": "/Users/robin/projects/flashboard/.venv/bin/pytest",
+      "args": ["tests/test_apis.py::test_register", "-s"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
       "name": "Python: Flask",
       "type": "python",
       "request": "launch",
