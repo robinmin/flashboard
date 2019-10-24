@@ -1,16 +1,29 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, url_for, current_app, render_template, get_flashed_messages
+from flask_login import login_url
 from flask_restplus import Resource, Namespace, fields, Api
 from flask_restplus.errors import abort as api_abort
 from flask_login import current_user
 
-from .forms import LoginForm
+from .forms import LoginForm, SignupForm
 from .services import UserService
 from .factories import normal_response, token_required
 from .utils import extract_authorization_from_header
 from .services import UserService, TokenService
 from .dtos import AppDTO
+from .app import send_email
+
 ###############################################################################
 
+# all build-in urls here
+all_urls = {
+    'login': 'flashboard.login',
+    'logout': 'flashboard.logout',
+    'signup': 'flashboard.signup',
+    'confirm_email': 'flashboard.confirm_email',
+    'home': 'flashboard.home',
+
+    'admin': 'admin.index',
+}
 
 # class AppDTO:
 #     api = Namespace('app', description='application related operations')
@@ -43,45 +56,6 @@ from .dtos import AppDTO
 #     #     'password': fields.String(required=True, description='user password')
 #     # })
 
-
-# get the namespaces of authentication
-# auth_ns = AppDTO.api
-# auth_ns = Namespace('app', description='application related operations')
-
-# api.add_namespace(auth_ns, path='/user')
-
-# @auth_ns.route('/register')
-# class Register(Resource):
-#     # 4-16 symbols, can contain A-Z, a-z, 0-9, _ (_ can not be at the begin/end and can not go in a row (__))
-#     USERNAME_REGEXP = r'^(?![_])(?!.*[_]{2})[a-zA-Z0-9._]+(?<![_])$'
-
-#     # 6-64 symbols, required upper and lower case letters. Can contain !@#$%_  .
-#     PASSWORD_REGEXP = r'^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d!@#$%_]{6,64}$'
-
-#     @auth_ns.expect(register_model, validate=True)
-#     @auth_ns.marshal_with(User.user_resource_model)
-#     @auth_ns.response(400, 'username or password incorrect')
-#     def post(self):
-#         pass
-#         if not re.search(self.USERNAME_REGEXP, v1_api.payload['username']):
-#             raise ValidationException(error_field_name='username',
-#                                       message='4-16 symbols, can contain A-Z, a-z, 0-9, _ \
-#                                       (_ can not be at the begin/end and can not go in a row (__))')
-
-#         if not re.search(self.PASSWORD_REGEXP, v1_api.payload['password']):
-#             raise ValidationException(error_field_name='password',
-#                                       message='6-64 symbols, required upper and lower case letters. Can contain !@#$%_')
-
-#         if User.query.filter_by(username=v1_api.payload['username']).first():
-#             raise ValidationException(
-#                 error_field_name='username', message='This username is already exists')
-
-#         user = User(
-#             username=v1_api.payload['username'], password=v1_api.payload['password'])
-#         db.session.add(user)
-#         db.session.commit()
-#         return user
-
 # create namespaces instance
 auth_ns = AppDTO.api
 
@@ -100,11 +74,11 @@ class Login(Resource):
         remember_me = False
 
         # mimic the LoginForm
-        form = LoginForm()
-        form.skip_csrf_validation()
-        form.email = email
-        form.password = password
-        form.remember_me = remember_me
+        form = LoginForm(data={
+            'email': email,
+            'password': password,
+            'remember_me': remember_me,
+        })
 
         status_code = 200
         msg = ''
@@ -134,7 +108,7 @@ class Login(Resource):
                 msg = 'Invalid username or password or inactive user'
         else:
             status_code = 401
-            msg = 'Invalid username or password'
+            msg = form.extract_errors() or 'Invalid username or password'
         return auth_ns.abort(status_code, msg or 'Unknown error')
 
 
@@ -162,6 +136,8 @@ class Refresh(Resource):
     @auth_ns.response(200, 'Success', AppDTO.return_token)
     @auth_ns.response(401, 'Invalid refresh token')
     def post(self):
+        """ API interface for refresh access token """
+
         # get refresh token from parameter
         refresh_token = auth_ns.payload['refresh_token'] if 'refresh_token' in auth_ns.payload else ''
         if refresh_token is None:
@@ -186,3 +162,62 @@ class Refresh(Resource):
             return {'access_token': access_token, 'refresh_token': refresh_token}, 200
 
         return auth_ns.abort(401, 'Failed to re-generate API tokens')
+
+
+@auth_ns.route('/register')
+class Register(Resource):
+    @auth_ns.expect(AppDTO.register_details, validate=True)
+    @auth_ns.marshal_with(AppDTO.return_message)
+    @auth_ns.response(401, 'username or password incorrect')
+    @token_required
+    def post(self):
+        """ API interface for user registration """
+        print('--------------------------->4')
+        if not current_user.is_authenticated:
+            return auth_ns.abort(401, 'Invalid user')
+
+        # load submitted data
+        name = auth_ns.payload['name'] if 'name' in auth_ns.payload else ''
+        email = auth_ns.payload['email'] if 'email' in auth_ns.payload else ''
+        password = auth_ns.payload['password'] if 'password' in auth_ns.payload else ''
+
+        # mimic the SignupForm
+        form = SignupForm(data={
+            'name': name,
+            'email': email,
+            'password': password,
+            'password2': password,
+        })
+
+        status_code = 200
+        msg = ''
+
+        # input data validation
+        if form.validate_on_submit():
+            usvc = UserService()
+            user, token, error = usvc.register_user(name, email, password)
+            if user and token:
+                # triger activation email
+                confirm_url = login_url(
+                    login_view=url_for(
+                        all_urls['login'],
+                        _external=True
+                    ),
+                    next_url=url_for(
+                        all_urls['confirm_email'],
+                        token=token.token
+                    ))
+                html = render_template(
+                    'activate.html', confirm_url=confirm_url
+                )
+                subject = 'Please confirm your email'
+                send_email(current_app, user.email, subject, html)
+
+                return normal_response()
+            else:
+                status_code = 401
+                msg = error or 'Unknown error in user registration'
+        else:
+            status_code = 401
+            msg = form.extract_errors() or 'Invalid username or password'
+        return auth_ns.abort(status_code, msg or 'Unknown error')
