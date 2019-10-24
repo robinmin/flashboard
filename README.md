@@ -38,3 +38,4 @@
 - [flask-restplus-full-todo-example-with-jwt](https://github.com/blohinn/flask-restplus-full-todo-example-with-jwt)
 - [How to structure a Flask-RESTPlus web service for production builds](https://www.freecodecamp.org/news/structuring-a-flask-restplus-web-service-for-production-builds-c2ec676de563/)
 - [Token-Based Authentication With Flask](https://realpython.com/token-based-authentication-with-flask/)
+- [Flask by Example](https://realpython.com/flask-by-example-part-1-project-setup/)
