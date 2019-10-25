@@ -15,6 +15,12 @@ from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
+from celery import Celery
+
 # import application packages
 from config.config import config_by_name
 from .database import init_db, create_all_tables
@@ -64,6 +70,12 @@ def create_app(extra_config_settings={}):
     # Load extra settings from extra_config_settings param
     if extra_config_settings is not None and len(extra_config_settings) > 0:
         app.config.update(extra_config_settings)
+
+    # integrate with sentry SDK
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    )
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
@@ -167,4 +179,33 @@ def send_email(app, to, subject, template):
         sender=app.config['MAIL_DEFAULT_SENDER']
     )
     return mail.send(msg)
+
+
+def int_celery(app):
+    """
+        create instance of celery, then you can customize task as shown below:
+
+            celery = init_celery(flask_app)
+
+            @celery.task()
+            def add_together(a, b):
+                return a + b
+    """
+
+    celery = Celery(
+        app.import_name,
+        backend=app.config['CELERY_RESULT_BACKEND'],
+        broker=app.config['CELERY_BROKER_URL']
+    )
+    celery.conf.update(app.config)
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
+
+
 ###############################################################################
