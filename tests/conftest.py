@@ -39,7 +39,7 @@ def app():
         # add meta data
         add_metadata_for_app(app)
 
-    yield app
+        yield app
 
     # close and remove the temporary database
     os.close(db_fd)
