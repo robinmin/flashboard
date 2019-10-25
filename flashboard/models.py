@@ -48,17 +48,17 @@ class UserModel(UserMixin, BaseModel):
 
     # define columns
     id = Column(Integer(), primary_key=True, autoincrement=True)
-    name = Column(String(50), unique=True, nullable=False, index=True)
-    email = Column(String(120), unique=True, nullable=False, index=True)
-    password = Column(String(64), nullable=False)
-    private_salt = Column(String(64), nullable=False)
+    name = Column(String(64), unique=True, nullable=False, index=True)
+    email = Column(String(128), unique=True, nullable=False, index=True)
+    password = Column(String(256), nullable=False)
+    private_salt = Column(String(256), nullable=False)
 
     actived = Column(Boolean(), default=False)
     authenticated = Column(Boolean(), default=False)
     last_login_at = Column(DateTime(), nullable=True)
-    last_login_ip = Column(String(100), nullable=True)
+    last_login_ip = Column(String(128), nullable=True)
     current_login_at = Column(DateTime(), nullable=True)
-    current_login_ip = Column(String(100), nullable=True)
+    current_login_ip = Column(String(128), nullable=True)
     login_count = Column(Integer(), default=0, nullable=False)
     signup_at = Column(DateTime(), nullable=True)
     confirmed_at = Column(DateTime(), nullable=True)
