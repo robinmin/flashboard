@@ -23,7 +23,8 @@ class Config(object):
     # Flask-SQLAlchemy settings
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/flashboard.db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://robin:dragon2001@127.0.0.1:5432/flashboard'
 
     # Flask-Mail settings
     # For smtp.gmail.com to work, you MUST set "Allow less secure apps" to ON in Google Accounts.
@@ -80,6 +81,13 @@ class Config(object):
 
     # Enable or disable the mask field, by default X-Fields
     RESTPLUS_MASK_SWAGGER = False
+
+    # configuration for sentry.io
+    SENTRY_DSN = 'https://774eb03106824447a4a7076afd9c7191@sentry.io/1795849'
+
+    # configuration for celery
+    CELERY_BROKER_URL = 'redis://localhost:6379',
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 
 class ProductionConfig(Config):
