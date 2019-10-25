@@ -11,8 +11,8 @@ install:
 	poetry install
 
 test:
-	# poetry run pytest -s tests
-	poetry run pytest tests/test_apis.py|grep -v .venv/lib/python3.7/site-packages/|grep -v DeprecationWarning
+	poetry run pytest tests|grep -v .venv/lib/python3.7/site-packages/|grep -v DeprecationWarning
+	# poetry run pytest tests/test_apis.py|grep -v .venv/lib/python3.7/site-packages/|grep -v DeprecationWarning
 
 run:
 	FLASK_ENV="development" python3 -u manage.py runserver
