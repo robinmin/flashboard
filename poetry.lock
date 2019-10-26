@@ -160,6 +160,20 @@ Flask = ">=0.9"
 Six = "*"
 
 [[package]]
+category = "dev"
+description = "A toolbar overlay for debugging Flask applications."
+name = "flask-debugtoolbar"
+optional = false
+python-versions = "*"
+version = "0.10.1"
+
+[package.dependencies]
+Blinker = "*"
+Flask = ">=0.8"
+itsdangerous = "*"
+werkzeug = "*"
+
+[[package]]
 category = "main"
 description = "User session management for Flask"
 name = "flask-login"
@@ -550,7 +564,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "739ec8e60e340329e164008e20d86c6e7597e1ccc02d98881e7fca1c3a570579"
+content-hash = "2bb9befa59596120bc352a2341ddc9e579154e2c6d0409e1e7e03d1b26280f63"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -570,6 +584,7 @@ coverage = ["08907593569fe59baca0bf152c43f3863201efb6113ecb38ce7e97ce339805a6", 
 flask = ["13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52", "45eb5a6fd193d6cf7e0cf5d8a5b31f83d5faae0293695626f539a823e93b13f6"]
 flask-admin = ["ed7b256471dba0f3af74f1a315733c3b36244592f2002c3bbdc65fd7c2aa807a"]
 flask-cors = ["72170423eb4612f0847318afff8c247b38bd516b7737adfc10d1c2cdbb382d16", "f4d97201660e6bbcff2d89d082b5b6d31abee04b1b3003ee073a6fd25ad1d69a"]
+flask-debugtoolbar = ["3d9657bc0c3633ace429e3ff451742bb59d1b7a7b95c9eb23a65ac9be2812959", "ec810083123aae0632eb32ba11e1cb4cdace81e7ce6c5009dd06c5204afbce52"]
 flask-login = ["c815c1ac7b3e35e2081685e389a665f2c74d7e077cb93cecabaea352da4752ec"]
 flask-mail = ["22e5eb9a940bf407bcf30410ecc3708f3c56cc44b29c34e1726fe85006935f41"]
 flask-migrate = ["6fb038be63d4c60727d5dfa5f581a6189af5b4e2925bc378697b4f0a40cfb4e1", "a96ff1875a49a40bd3e8ac04fce73fdb0870b9211e6168608cbafa4eb839d502"]
