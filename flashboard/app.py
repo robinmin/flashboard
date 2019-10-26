@@ -169,6 +169,13 @@ def init_app(app):
     login_manager.session_protection = 'strong'
     login_manager.login_view = 'login'
 
+    if app.config['ENV'] == 'development':
+        from flask_debugtoolbar import DebugToolbarExtension
+
+        # disable intercept redirect
+        app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+        toolbar = DebugToolbarExtension(app)
+
 
 def send_email(app, to, subject, template):
     """ send email message """
