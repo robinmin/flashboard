@@ -75,21 +75,14 @@ def save_item(obj_item):
 def init_db(app, db_uri=None):
     """ initialize database session """
 
-    global engine, db_session
-    if db_uri is None:
-        db_uri = app.config['SQLALCHEMY_DATABASE_URI']
-
-    if engine is None:
-        engine = create_engine(db_uri)
-    if db_session is None:
-        db_session = scoped_session(sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=engine
-        ))
+    global db_session
+    db_session = create_session(app, db_uri, True)
 
     # add query engine
     BaseModel.query = db_session.query_property()
+
+    # create all tables
+    BaseModel.metadata.create_all(bind=engine)
 
     # add handler to teardown
     @app.teardown_request
@@ -109,11 +102,7 @@ def init_db(app, db_uri=None):
 def create_all_tables(app, drop_all=False):
     """ create all tables(import all modules before call this function) """
 
-    global engine
-    if engine is None:
-        engine = create_engine(
-            app.config['SQLALCHEMY_DATABASE_URI']
-        )
+    engine = get_engine(app)
 
     if drop_all:
         BaseModel.metadata.drop_all(bind=engine)
@@ -124,3 +113,52 @@ def create_all_tables(app, drop_all=False):
     # import .models
 
     BaseModel.metadata.create_all(bind=engine)
+
+
+def get_engine(app, db_uri=None):
+    """get db engine
+
+    Arguments:
+        app {object} -- instance of flask application
+
+    Keyword Arguments:
+        db_uri {string} -- db connection string (default: {None})
+
+    Returns:
+        object -- instance of db engine
+    """
+
+    if db_uri is None:
+        # get default global engine
+        global engine
+        if engine is None:
+            engine = create_engine(
+                app.config['SQLALCHEMY_DATABASE_URI']
+            )
+        return engine
+
+    # get specified database engine
+    return create_engine(db_uri)
+
+
+def create_session(app, db_uri=None, scoped=False):
+    """
+    Create an sql alchemy session for IO db operations
+    :param dbpath: the path to the database, e.g. sqlite:///path_to_my_dbase.sqlite
+    :param scoped: boolean (False by default) if the session must be scoped session
+    """
+    # init the session:
+    engine = get_engine(app, db_uri)
+
+    if not scoped:
+        # create a configured "Session" class
+        session = sessionmaker(bind=engine)
+        # create a Session
+        return session()
+    else:
+        session_factory = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=engine
+        )
+        return scoped_session(session_factory)
