@@ -12,7 +12,7 @@
             <div class="field">
               {{ form.name.label(class="label") }}
               <div class="control has-icons-left">
-                {{ form.name(class="input", autocomplete="new-password") }}
+                {{ form.name(class="input", autocomplete="new-password", placeholder=_("Should be converted to lower case")) }}
                 <span class="icon is-small is-left">
                   <i class="fa fa-user"></i>
                 </span>
@@ -22,7 +22,7 @@
             <div class="field">
               {{ form.email.label(class="label") }}
               <div class="control has-icons-left">
-                {{ form.email(class="input") }}
+                {{ form.email(class="input", placeholder=_("E.g. : username@domain.com")) }}
                 <span class="icon is-small is-left">
                   <i class="fa fa-envelope"></i>
                 </span>
@@ -32,7 +32,7 @@
             <div class="field">
               {{ form.password.label(class="label") }}
               <div class="control has-icons-left">
-                {{ form.password(class="input", autocomplete="new-password") }}
+                {{ form.password(class="input", autocomplete="new-password", placeholder=_("Must be 6 to 12 characters and contain at least one of the number, uppercase and lowercase letters.")) }}
                 <span class="icon is-small is-left">
                   <i class="fa fa-lock"></i>
                 </span>
@@ -42,7 +42,7 @@
             <div class="field">
               {{ form.password2.label(class="label") }}
               <div class="control has-icons-left">
-                {{ form.password2(class="input", autocomplete="new-password") }}
+                {{ form.password2(class="input", autocomplete="new-password", placeholder=_("Both passwords must be the same.")) }}
                 <span class="icon is-small is-left">
                   <i class="fa fa-lock"></i>
                 </span>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="field is-grouped">
-              <div class="control"><a class="button is-text" href="{{ url_login }}">Login</a></div>
+              <div class="control"><a class="button is-text" href="{{ url_login }}">{{ _('Login') }}</a></div>
               <div class="control">{{ form.submit(class="button is-success") }}</div>
             </div>
 
