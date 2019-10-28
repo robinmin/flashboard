@@ -6,31 +6,23 @@ import logging.config
 from datetime import datetime
 
 # import flask and extension packages
-from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask import Flask, redirect, request, url_for
+from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
 
 # from flask_migrate import Migrate, MigrateCommand
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
-
-from celery import Celery
-
 # import application packages
 from config.config import config_by_name
-from .database import init_db, create_all_tables
+from .database import init_db, create_all_tables, create_session
 
 # current working folder
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 # Instance of Flask extensions
 cors = CORS()
-# db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
 # migrate = Migrate()
@@ -71,36 +63,49 @@ def create_app(extra_config_settings={}):
     if extra_config_settings is not None and len(extra_config_settings) > 0:
         app.config.update(extra_config_settings)
 
-    # integrate with sentry SDK
-    sentry_sdk.init(
-        dsn=app.config['SENTRY_DSN'],
-        integrations=[FlaskIntegration(), SqlalchemyIntegration()]
-    )
-
-    # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
-    from wtforms.fields import HiddenField
-
-    def is_hidden_field_filter(field):
-        return isinstance(field, HiddenField)
-
-    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
-
     init_app(app)
+
+    # enable sentry
+    if app.config['ENABLE_SENTRY']:
+        enable_sentry(app)
+
+    # enable admin
+    if app.config['ENABLE_ADMIN']:
+        enable_admin(app)
+
+    # enable debug tool bar
+    if app.config['ENABLE_DEBUG_TOOLBAR']:
+        from flask_debugtoolbar import DebugToolbarExtension
+
+        # disable intercept redirect
+        app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+        toolbar = DebugToolbarExtension(app)
+
+    # enable admin
+    if app.config['ENABLE_CELERY']:
+        enable_celery(app)
 
     # register all relevant blueprints
     with app.app_context():
-        from .views import bp as bp_sys
-        from .factories import api, bp as bp_api
-        from .apis import auth_ns
+        if app.config['ENABLE_BUILDIN_API']:
+            from .factories import api, bp as bp_api
+            from .apis import auth_ns
 
-        # avoid to check CSRF on APIs
-        csrf_protect.exempt(bp_api)
+            # avoid to check CSRF on APIs
+            csrf_protect.exempt(bp_api)
 
-        # add namespaces for API
-        api.add_namespace(auth_ns, path='/user')
+            # add namespaces for API
+            api.add_namespace(auth_ns, path='/user')
 
-        app.register_blueprint(bp_sys, url_prefix='/sys')
-        app.register_blueprint(bp_api, url_prefix='/api')
+        if app.config['ENABLE_BUILDIN_VIEW']:
+            from .views import bp as bp_sys
+
+            app.register_blueprint(bp_sys, url_prefix='/sys')
+            app.register_blueprint(bp_api, url_prefix='/api')
+
+            from flashboard.views import login
+            app.add_url_rule('/',      view_func=login)
+            app.add_url_rule('/index', view_func=login)
 
         # Initialize Global db and create all tables
         init_db(app)
@@ -150,9 +155,6 @@ def init_app(app):
     # Setup Flask-CORS
     cors.init_app(app)
 
-    # Setup Flask-SQLAlchemy
-    # db.init_app(app)
-
     # Setup Flask-Mail
     mail.init_app(app)
     # Setup an error-logger to send emails to app.config.ADMINS
@@ -167,14 +169,7 @@ def init_app(app):
     # Setup Flask-Login
     login_manager.init_app(app)
     login_manager.session_protection = 'strong'
-    login_manager.login_view = 'login'
-
-    if app.config['ENV'] == 'development':
-        from flask_debugtoolbar import DebugToolbarExtension
-
-        # disable intercept redirect
-        app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-        toolbar = DebugToolbarExtension(app)
+    login_manager.login_view = app.config['APP_URL_WELCOME']
 
 
 def send_email(app, to, subject, template):
@@ -188,7 +183,25 @@ def send_email(app, to, subject, template):
     return mail.send(msg)
 
 
-def int_celery(app):
+def enable_sentry(app):
+    """ enable sentry
+
+    Arguments:
+        app {object} -- instance of application
+    """
+
+    import sentry_sdk
+    from sentry_sdk.integrations.flask import FlaskIntegration
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
+    # integrate with sentry SDK
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    )
+
+
+def enable_celery(app):
     """
         create instance of celery, then you can customize task as shown below:
 
@@ -198,6 +211,8 @@ def int_celery(app):
             def add_together(a, b):
                 return a + b
     """
+
+    from celery import Celery
 
     celery = Celery(
         app.import_name,
@@ -213,6 +228,46 @@ def int_celery(app):
 
     celery.Task = ContextTask
     return celery
+
+
+def enable_admin(app):
+    """ initialize admin component """
+
+    from flask_admin import Admin
+    from flask_admin.menu import MenuLink
+    from flask_admin.contrib.sqla import ModelView
+    from sqlalchemy.ext.declarative.api import DeclarativeMeta
+
+    from flashboard import models
+
+    # get wecome URL
+    url_welcome = app.config['APP_URL_WELCOME']
+
+    # define customized class
+    class MyModelView(ModelView):
+
+        def is_accessible(self):
+            return current_user and current_user.is_authenticated
+
+        def inaccessible_callback(self, name, **kwargs):
+            # redirect to login page if user doesn't have access
+            return redirect(url_for(url_welcome, next=request.url))
+
+    # set optional bootswatch theme
+    app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+    admin = Admin(app, name='Admin', template_mode='bootstrap3')
+
+    # Add administrative views here
+    # get all models defined in `models`
+    session = create_session(app)
+    all_models = [getattr(models, model) for model in dir(models)
+                  if model != 'BaseModel' and isinstance(getattr(models, model), DeclarativeMeta)
+                  ]
+    for model in all_models:
+        admin.add_view(MyModelView(model, session, category='Sys.'))
+
+    # add hyper link to return back to home page
+    admin.add_link(MenuLink(name='Back', url='/'))
 
 
 ###############################################################################
