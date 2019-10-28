@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort, jsonify, current_app, request, redirect, url_for, flash
 from flask_login import current_user, login_required, login_url
+from flask_babel import gettext as _
 
 from .forms import LoginForm, SignupForm
 from .services import UserService
@@ -35,7 +36,7 @@ def user_loader(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     """ Redirect unauthorized users to Login page """
-    flash('You must be logged in to view that page.')
+    flash(_('You must be logged in to view that page.'))
     return redirect(url_for(all_urls['login']))
 
 
@@ -65,11 +66,11 @@ def login():
         if user and usvc.login_user(user, remember=remember_me, login_ip=login_ip, force=include_inactive):
             return redirect(next or url_for(all_urls['home']))
         else:
-            flash('Invalid username or password or inactive user', 'error')
+            flash(_('Invalid username or password or inactive user'), 'error')
             # return redirect(next or url_for(all_urls['login']))
     return render_template(
         'login.html',
-        title='Sign In',
+        title=_('Sign In'),
         form=form,
         url_login=url_for(all_urls['login']),
         url_signup=url_for(all_urls['signup']),
@@ -124,21 +125,21 @@ def signup():
                 html = render_template(
                     'activate.html', confirm_url=confirm_url
                 )
-                subject = 'Please confirm your email'
+                subject = _('Please confirm your email')
                 send_email(current_app, user.email, subject, html)
 
                 flash(
-                    'Activation email has been sent to your email box. Please confirm your email first.',
+                    _('Activation email has been sent to your email box. Please confirm your email first.'),
                     'info'
                 )
                 return redirect(request.args.get('next') or url_for(all_urls['login']))
             else:
-                flash(error or 'Unknown error in user registration', 'error')
+                flash(error or _('Unknown error in user registration'), 'error')
         else:
-            flash('Both passwords must be the same.', 'error')
+            flash(_('Both passwords must be the same.'), 'error')
     return render_template(
         'signup.html',
-        title='Sign Up',
+        title=_('Sign Up'),
         form=form,
         url_login=url_for(all_urls['login']),
         url_signup=url_for(all_urls['signup'])
@@ -155,15 +156,15 @@ def confirm_email(token):
     try:
         result, error = usvc.confirm_user(current_user, token)
         if not result:
-            flash(error or 'Unknown error in comfirm user.', 'danger')
+            flash(error or _('Unknown error in comfirm user.'), 'danger')
         else:
             user = usvc.load_user(current_user.email)
             if user and user.confirmed_at:
-                flash('Account already confirmed. Please login.', 'info')
+                flash(_('Account already confirmed. Please login.'), 'info')
             else:
-                flash('Something goes wrong when comfirming your account.', 'danger')
+                flash(_('Something goes wrong when comfirming your account.'), 'danger')
     except:
-        flash('The confirmation link is invalid or has expired.', 'danger')
+        flash(_('The confirmation link is invalid or has expired.'), 'danger')
     return redirect(url_for(all_urls['logout']))
 
 
@@ -187,7 +188,7 @@ def home():
 
         return render_template(
             'home.html',
-            title='Home',
+            title=_('Home'),
             url_logout=url_for(all_urls['logout']),
             url_admin=url_admin
         )
