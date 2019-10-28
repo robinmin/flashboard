@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db model shell recreate_db migrate all
+.PHONY: clean list install test run db model shell recreate_db migrate i18n all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -39,5 +39,18 @@ migrate:
 # init:
 # 	python3 -u manage.py drop_all
 # 	python3 -u manage.py init_db
+
+i18n:
+	# extract i18n string table from source code
+	pybabel extract -F babel.cfg -k lazy_gettext -o flashboard/translations/messages.pot .
+
+	## prepare to translate into zh_Hans_CN
+	test -s flashboard/translations/zh_Hans_CN/LC_MESSAGES/messages.po || pybabel init -i flashboard/translations/messages.pot -d flashboard/translations -l zh_Hans_CN
+
+	# create translation files for the supported languages
+	pybabel update -i flashboard/translations/messages.pot -d flashboard/translations
+
+	# compile Translations
+	pybabel compile -d flashboard/translations
 
 all: clean install test run
