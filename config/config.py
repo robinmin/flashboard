@@ -77,14 +77,23 @@ class Config(object):
     # Enable or disable the mask field, by default X-Fields
     RESTPLUS_MASK_SWAGGER = False
 
-    # configuration for sentry.io
-
     # --------------------------------------------------------------------------
     #  Application settings
     # --------------------------------------------------------------------------
     APP_URL_WELCOME = 'flashboard.login'
     APP_NAME = 'Flask-User starter app'
     APP_SYSTEM_ERROR_SUBJECT_LINE = APP_NAME + " system error"
+
+    # --------------------------------------------------------------------------
+    #  Application settings -- i18n
+    # --------------------------------------------------------------------------
+    BABEL_DEFAULT_LOCALE = 'zh_Hans_CN'
+    BABEL_DEFAULT_TIMEZONE = 'UTC'
+    # available languages
+    BABEL_LANGUAGES = {
+        # 'en': 'English',
+        'zh_Hans_CN': 'Simplified Chinese',
+    }
 
     # --------------------------------------------------------------------------
     #  Enable features -- misc
