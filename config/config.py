@@ -44,7 +44,6 @@ class Config(object):
     SECURITY_EMAIL_SENDER = 'luonbin@hotmail.com'
 
     # Flask-User settings
-    USER_APP_NAME = 'Flask-User starter app'
     USER_ENABLE_CHANGE_PASSWORD = True  # Allow users to change their password
     USER_ENABLE_CHANGE_USERNAME = False  # Allow users to change their username
     USER_ENABLE_CONFIRM_EMAIL = True  # Force users to confirm their email
@@ -55,10 +54,6 @@ class Config(object):
     USER_ENABLE_USERNAME = False  # Register and Login with username
     USER_AFTER_LOGIN_ENDPOINT = 'main.member_page'
     USER_AFTER_LOGOUT_ENDPOINT = 'main.home_page'
-
-    # Application settings
-    APP_NAME = 'Flask-User starter app'
-    APP_SYSTEM_ERROR_SUBJECT_LINE = APP_NAME + " system error"
 
     # Sendgrid settings
     SENDGRID_API_KEY = 'place-your-sendgrid-api-key-here'
@@ -83,11 +78,34 @@ class Config(object):
     RESTPLUS_MASK_SWAGGER = False
 
     # configuration for sentry.io
-    SENTRY_DSN = 'https://774eb03106824447a4a7076afd9c7191@sentry.io/1795849'
 
-    # configuration for celery
+    # --------------------------------------------------------------------------
+    #  Application settings
+    # --------------------------------------------------------------------------
+    APP_URL_WELCOME = 'flashboard.login'
+    APP_NAME = 'Flask-User starter app'
+    APP_SYSTEM_ERROR_SUBJECT_LINE = APP_NAME + " system error"
+
+    # --------------------------------------------------------------------------
+    #  Enable features -- misc
+    # --------------------------------------------------------------------------
+    ENABLE_ADMIN = True
+    ENABLE_DEBUG_TOOLBAR = True
+    ENABLE_BUILDIN_API = True
+    ENABLE_BUILDIN_VIEW = True
+
+    # --------------------------------------------------------------------------
+    #  Enable features -- celery
+    # --------------------------------------------------------------------------
+    ENABLE_CELERY = False
     CELERY_BROKER_URL = 'redis://localhost:6379',
     CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+    # --------------------------------------------------------------------------
+    #  Enable features -- sentry
+    # --------------------------------------------------------------------------
+    ENABLE_SENTRY = True
+    SENTRY_DSN = 'https://774eb03106824447a4a7076afd9c7191@sentry.io/1795849'
 
 
 class ProductionConfig(Config):
