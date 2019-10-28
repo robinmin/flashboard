@@ -26,6 +26,7 @@
 - Add Flash-Mail support for user email activation.
 - Integrate with flask-restplus and swagger-UI.
 - RESTful API with JWT support.
+- I18N support with flask-babel.
 
 #### TODOs
 
