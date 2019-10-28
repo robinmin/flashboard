@@ -24,8 +24,12 @@ all_urls = {
 @login_manager.user_loader
 def user_loader(user_id):
     """ Given *user_id*, return the associated User object """
-    user = UserService().load_user(user_id)
-    return user if user and user.actived else None
+
+    try:
+        user = UserService().load_user(user_id)
+        return user if user and user.actived else None
+    except:
+        return None
 
 
 @login_manager.unauthorized_handler
