@@ -146,3 +146,34 @@ def extract_authorization_from_header():
         return None
 
     return access_token[len(access_token)-1]
+
+
+def list_properties(obj, type):
+    """ list all properties by type
+
+    Arguments:
+        obj {object} -- object instance
+        type {object} -- type of property
+    """
+
+    return [getattr(obj, attr) for attr in dir(obj) if isinstance(getattr(obj, attr), type)]
+
+
+def get_all_routes(app):
+    """ get all routes
+
+    Arguments:
+        app {object} -- instance of application
+
+    Returns:
+        list -- available routes list
+    """
+    import urllib
+
+    result = []
+    for rule in app.url_map.iter_rules():
+        methods = ', '.join(rule.methods)
+        line = urllib.parse.unquote("{:40s} {:24s}\t{}".format(
+            rule.endpoint, methods, rule))
+        result.append(line)
+    return result
