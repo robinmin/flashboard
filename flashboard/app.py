@@ -13,6 +13,7 @@ from flask_mail import Mail, Message
 # from flask_migrate import Migrate, MigrateCommand
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
+from flask_babel import Babel, gettext as _
 
 # import application packages
 from config.config import config_by_name
@@ -28,8 +29,10 @@ mail = Mail()
 # migrate = Migrate()
 csrf_protect = CSRFProtect()
 
-
+babel = Babel()
 ###############################################################################
+
+
 def load_json_config(conf_file):
     """ load configuration information in json format """
 
@@ -81,7 +84,7 @@ def create_app(extra_config_settings={}):
         app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
         toolbar = DebugToolbarExtension(app)
 
-    # enable admin
+    # enable celery
     if app.config['ENABLE_CELERY']:
         enable_celery(app)
 
@@ -133,7 +136,8 @@ def init_email_error_handler(app):
 
     # Retrieve app settings from app.config
     to_addr_list = app.config['ADMINS']
-    subject = app.config.get('APP_SYSTEM_ERROR_SUBJECT_LINE', 'System Error')
+    subject = app.config.get(
+        'APP_SYSTEM_ERROR_SUBJECT_LINE', _('System Error'))
 
     # Setup an SMTP mail handler for error-level messages
     import logging
@@ -172,6 +176,9 @@ def init_app(app):
     login_manager.init_app(app)
     login_manager.session_protection = 'strong'
     login_manager.login_view = app.config['APP_URL_WELCOME']
+
+    # enable i18n
+    babel.init_app(app)
 
 
 def send_email(app, to, subject, template):
@@ -271,5 +278,27 @@ def enable_admin(app):
     # add hyper link to return back to home page
     admin.add_link(MenuLink(name='Back', url='/'))
 
+
+@babel.localeselector
+def get_locale():
+    # TODO : user prefference support by current_user
+    # if a user is logged in, use the locale from the user settings
+    # user = getattr(g, 'user', None)
+    # if user is not None:
+    #     return user.locale
+
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits. The best match wins.
+    from flask import current_app
+    return request.accept_languages.best_match(
+        current_app.config['BABEL_LANGUAGES'].keys() or
+        current_app.config['BABEL_DEFAULT_LOCALE']
+    )
+
+# @babel.timezoneselector
+# def get_timezone():
+#     user = getattr(g, 'user', None)
+#     if user is not None:
+#         return user.timezone
 
 ###############################################################################
