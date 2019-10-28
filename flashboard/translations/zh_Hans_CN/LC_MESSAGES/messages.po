@@ -1,0 +1,163 @@
+# Chinese (Simplified, China) translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-10-28 23:48+0800\n"
+"PO-Revision-Date: 2019-10-28 16:44+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: flashboard/app.py:140
+msgid "System Error"
+msgstr "系统错误"
+
+#: flashboard/forms.py:26 flashboard/forms.py:45
+msgid "Email"
+msgstr "电邮"
+
+#: flashboard/forms.py:27 flashboard/forms.py:46
+msgid "Email is required"
+msgstr "电邮是必填项"
+
+#: flashboard/forms.py:29 flashboard/forms.py:48
+msgid "Please input valid email, e.g. : username@domain.com"
+msgstr "请输入有效的电邮，如username@domain.com"
+
+#: flashboard/forms.py:31 flashboard/forms.py:50
+msgid "Password"
+msgstr "密码"
+
+#: flashboard/forms.py:32 flashboard/forms.py:51
+msgid "Password is required"
+msgstr "密码是必填项"
+
+#: flashboard/forms.py:35
+msgid "Remember me"
+msgstr "记住登录"
+
+#: flashboard/forms.py:36 flashboard/templates/signup.html:53
+msgid "Login"
+msgstr "登录"
+
+#: flashboard/forms.py:41
+msgid "User Name"
+msgstr "用户名"
+
+#: flashboard/forms.py:42
+msgid "User Name is required"
+msgstr "用户名是必填项"
+
+#: flashboard/forms.py:54
+msgid "Repeated Password"
+msgstr "重新输入密码"
+
+#: flashboard/forms.py:55
+msgid "Repeated password is required too"
+msgstr "重新输入密码是必填项"
+
+#: flashboard/forms.py:58
+msgid "Sign up"
+msgstr "注册"
+
+#: flashboard/views.py:39
+msgid "You must be logged in to view that page."
+msgstr "请先登录"
+
+#: flashboard/views.py:69
+msgid "Invalid username or password or inactive user"
+msgstr "无效的用户名、密码或者该用户未激活"
+
+#: flashboard/views.py:73
+msgid "Sign In"
+msgstr "登录"
+
+#: flashboard/views.py:128
+msgid "Please confirm your email"
+msgstr "请确认你的电邮"
+
+#: flashboard/views.py:132
+msgid ""
+"Activation email has been sent to your email box. Please confirm your "
+"email first."
+msgstr "激活邮件已经发送到您的邮箱，请先确认"
+
+#: flashboard/views.py:137
+msgid "Unknown error in user registration"
+msgstr "用户注册中发生未知错误"
+
+#: flashboard/templates/signup.html:45 flashboard/views.py:139
+msgid "Both passwords must be the same."
+msgstr "两次密码必须一致"
+
+#: flashboard/templates/login.html:39 flashboard/views.py:142
+msgid "Sign Up"
+msgstr "注册"
+
+#: flashboard/views.py:159
+msgid "Unknown error in comfirm user."
+msgstr "确认用户中发生未知错误"
+
+#: flashboard/views.py:163
+msgid "Account already confirmed. Please login."
+msgstr "用户已确认，请登"
+
+#: flashboard/views.py:165
+msgid "Something goes wrong when comfirming your account."
+msgstr "在确认用户中，发生了未知错误"
+
+#: flashboard/views.py:167
+msgid "The confirmation link is invalid or has expired."
+msgstr "该确认链接无效或者已过期"
+
+#: flashboard/templates/home.html:22 flashboard/templates/home.html:65
+#: flashboard/views.py:191
+msgid "Home"
+msgstr "主页"
+
+#: flashboard/templates/activate.html:1
+msgid ""
+"Welcome! Thanks for signing up. Please follow this link to activate your "
+"account:"
+msgstr "恭喜你，只需点击下面的链接即可激活你的用户了："
+
+#: flashboard/templates/activate.html:4
+msgid "Cheers!"
+msgstr "祝您生活愉快！"
+
+#: flashboard/templates/home.html:26
+msgid "Admin"
+msgstr "管理"
+
+#: flashboard/templates/home.html:55
+msgid "Logout"
+msgstr "退出"
+
+#: flashboard/templates/home.html:67
+msgid "Welcome back"
+msgstr "欢迎回来"
+
+#: flashboard/templates/signup.html:15
+msgid "Should be converted to lower case"
+msgstr "会被全部转换成小写字母保存"
+
+#: flashboard/templates/signup.html:25
+msgid "E.g. : username@domain.com"
+msgstr "如username@domain.com"
+
+#: flashboard/templates/signup.html:35
+msgid ""
+"Must be 6 to 12 characters and contain at least one of the number, "
+"uppercase and lowercase letters."
+msgstr "长度为6到12位，需至少包含数字、大写字母和小写字母各一个及以上"
+
