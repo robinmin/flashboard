@@ -22,6 +22,7 @@ pyjwt = "^1.7"
 sentry-sdk = "=0.13.0"
 celery = "^4.3"
 psycopg2 = "^2.8"
+flask-babel = "^0.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
