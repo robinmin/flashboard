@@ -46,8 +46,12 @@ class UserService(BaseService):
         if hasattr(user_info, 'authenticated'):
             return user_info
         elif isinstance(user_info, str):
+            if user_info.find('@'):
+                return self.klass.query.filter(
+                    self.klass.email == user_info
+                ).first()
             return self.klass.query.filter(
-                self.klass.email == user_info
+                self.klass.name == user_info
             ).first()
         elif isinstance(user_info, int):
             return self.klass.query.get(user_info)
