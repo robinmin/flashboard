@@ -19,11 +19,11 @@
       <div class="navbar-start">
         <a class="navbar-item" href="#">
           <span class="icon"><i class="fas fa-home"></i></span>
-          Home
+          {{ _('Home') }}
         </a>
         {% if url_admin %}<a class="navbar-item" href="{{ url_admin }}">
           <span class="icon"><i class="fas fa-tasks"></i></span>
-          Admin
+          {{ _('Admin') }}
         </a>{% endif %}
 
         <!--a class="navbar-item">Documentation</a>
@@ -52,7 +52,7 @@
             </a>
             <a class="button is-light" href="{{ url_logout }}">
               <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-              Logout
+              {{ _('Logout') }}
             </a>
           </div>
         </div>
@@ -62,9 +62,9 @@
 
   <section class="section">
     <div class="container">
-      <h1 class="title">Home</h1>
+      <h1 class="title">{{ _('Home') }}</h1>
       <h2 class="subtitle">
-        Welcome back{% if current_user.is_authenticated %}, {{ current_user.name}} {% endif %}!
+        {{ _('Welcome back') }} {% if current_user.is_authenticated %}, {{ current_user.name}} {% endif %}!
       </h2>
 
       <!--div class="field is-grouped">
