@@ -145,7 +145,7 @@ def signup():
 @login_required
 def confirm_email(token):
     if not current_user.is_authenticated:
-        return current_app.login_manager.unauthorized()
+        return login_manager.unauthorized()
 
     usvc = UserService()
     try:
@@ -178,7 +178,8 @@ def home():
     if current_user.is_authenticated:
         url_admin = ''
         if current_app.config['ENV'] == 'development':
-            url_admin = url_for(all_urls['admin'])
+            url_admin = url_for(
+                all_urls['admin']) if current_app.config['ENABLE_ADMIN'] else ''
 
         return render_template(
             'home.html',
