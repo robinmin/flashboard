@@ -97,12 +97,14 @@ def create_app(extra_config_settings={}):
             # add namespaces for API
             api.add_namespace(auth_ns, path='/user')
 
+            app.register_blueprint(bp_api, url_prefix='/api')
         if app.config['ENABLE_BUILDIN_VIEW']:
             from .views import bp as bp_sys
 
             app.register_blueprint(bp_sys, url_prefix='/sys')
-            app.register_blueprint(bp_api, url_prefix='/api')
 
+            # add default page
+            # TODO: how to use APP_URL_WELCOME to call add_url_rule
             from flashboard.views import login
             app.add_url_rule('/',      view_func=login)
             app.add_url_rule('/index', view_func=login)
