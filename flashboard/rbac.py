@@ -46,8 +46,8 @@ def rbac_module(*module_names):
 def create_all_roles(drop_existing=False):
     """ create all pre-defined roles """
 
-    from flashboard.database import db_trasaction
-    from flashboard.models import RoleModel
+    from .database import db_trasaction
+    from .models import RoleModel
 
     if drop_existing:
         RoleModel.query.delete()

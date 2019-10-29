@@ -113,7 +113,7 @@ def create_app(extra_config_settings={}):
 
             # add default page
             # TODO: how to use APP_URL_WELCOME to call add_url_rule
-            from flashboard.views import login
+            from .views import login
             app.add_url_rule('/',      view_func=login)
             app.add_url_rule('/index', view_func=login)
 
