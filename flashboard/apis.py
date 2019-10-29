@@ -23,34 +23,34 @@ authorizations = {
         'type': 'apiKey',
         'in': 'header',
         'name': 'Authorization',
-        'description': 'JWT authorization key which must be started with "Bearer "'
+        'description': _('JWT authorization key which must be started with "Bearer "')
     }
 }
 api = Api(
     bp,
-    title='Flashboard API',
+    title=_('Flashboard API'),
     version='1.0',
     # doc=False,  # disable Swagger UI entirely
     authorizations=authorizations,
-    description='Flashboard API'
+    description=_('Flashboard API')
 )
 
 
 @api.errorhandler(ValidationException)
 def handle_validation_exception(error):
-    return {'message': 'Validation error', 'errors': {error.error_field_name: error.message}}, 400
+    return {'message': _('Validation error'), 'errors': {error.error_field_name: error.message}}, 400
 
 
 @api.errorhandler(jwt.ExpiredSignatureError)
 def handle_expired_signature_error(error):
-    return normal_response('Token expired', 401)
+    return normal_response(_('Token expired'), 401)
 
 
 @api.errorhandler(jwt.InvalidTokenError)
 @api.errorhandler(jwt.DecodeError)
 @api.errorhandler(jwt.InvalidIssuerError)
 def handle_invalid_token_error(error):
-    return normal_response('Token incorrect, supplied or malformed', 401)
+    return normal_response(_('Token incorrect, supplied or malformed'), 401)
 
 
 # create namespaces instance
