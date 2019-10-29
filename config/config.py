@@ -157,3 +157,17 @@ def config_factory(stage):
         'testing': TestingConfig,
     }
     return config_mapping[stage] if stage in config_mapping else config_mapping['production']
+
+
+# ------------------------------------------------------------------------------
+# all endpoint mapping here
+# ------------------------------------------------------------------------------
+all_urls = {
+    'login': 'flashboard.login',
+    'logout': 'flashboard.logout',
+    'signup': 'flashboard.signup',
+    'confirm_email': 'flashboard.confirm_email',
+    'home': 'flashboard.home',
+
+    'admin': 'admin.index',
+}
