@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-29 23:17+0800\n"
+"POT-Creation-Date: 2019-10-29 23:52+0800\n"
 "PO-Revision-Date: 2019-10-28 16:44+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -18,61 +18,113 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: flashboard/apis.py:24 flashboard/apis.py:66 flashboard/views.py:42
+#: flashboard/apis.py:26
+msgid "JWT authorization key which must be started with \"Bearer \""
+msgstr "JWT认证令牌必须以\"Bearer \"开头"
+
+#: flashboard/apis.py:31 flashboard/apis.py:35
+msgid "Flashboard API"
+msgstr "Flashboard API"
+
+#: flashboard/apis.py:41 flashboard/utils.py:189
+msgid "Validation error"
+msgstr "验证失败"
+
+#: flashboard/apis.py:46
+msgid "Token expired"
+msgstr "令牌失效"
+
+#: flashboard/apis.py:53
+msgid "Token incorrect, supplied or malformed"
+msgstr "令牌不正确，提供方或格式不正确"
+
+#: flashboard/apis.py:64 flashboard/apis.py:106 flashboard/views.py:42
 msgid "Invalid username or password or inactive user"
 msgstr "无效的用户名、密码或者该用户未激活"
 
-#: flashboard/apis.py:63
+#: flashboard/apis.py:103
 msgid "Failed to generate API tokens"
 msgstr "生成API令牌失败"
 
-#: flashboard/apis.py:69 flashboard/apis.py:184
+#: flashboard/apis.py:109 flashboard/apis.py:224
 msgid "Invalid username or password"
 msgstr "无效的用户名或密码"
 
-#: flashboard/apis.py:70 flashboard/apis.py:185
+#: flashboard/apis.py:110 flashboard/apis.py:225
 msgid "Unknown error"
 msgstr "未知错误"
 
-#: flashboard/apis.py:96 flashboard/apis.py:104
+#: flashboard/apis.py:136 flashboard/apis.py:144
 msgid "Invalid refresh token"
 msgstr "无效的刷新令牌"
 
-#: flashboard/apis.py:114
+#: flashboard/apis.py:154
 msgid "Invalid or expired refresh token"
 msgstr "无效或者已经失效的刷新令牌"
 
-#: flashboard/apis.py:124
+#: flashboard/apis.py:164
 msgid "Failed to re-generate API tokens"
 msgstr "重新生成API令牌失败"
 
-#: flashboard/apis.py:131
+#: flashboard/apis.py:171
 msgid "username or password incorrect"
 msgstr "无效的用户名或密码"
 
-#: flashboard/apis.py:138
+#: flashboard/apis.py:178
 msgid "Invalid user"
 msgstr "无效用户"
 
-#: flashboard/apis.py:175 flashboard/views.py:84
+#: flashboard/apis.py:215 flashboard/views.py:84
 msgid "Please confirm your email"
 msgstr "请确认你的电邮"
 
-#: flashboard/apis.py:181 flashboard/views.py:93
+#: flashboard/apis.py:221 flashboard/views.py:93
 msgid "Unknown error in user registration"
 msgstr "用户注册中发生未知错误"
 
-#: flashboard/app.py:146
+#: flashboard/app.py:145
 msgid "System Error"
 msgstr "系统错误"
 
-#: flashboard/app.py:185
+#: flashboard/app.py:184
 msgid "Unauthorized User"
 msgstr "未授权的用户"
 
-#: flashboard/app.py:236
+#: flashboard/app.py:235
 msgid "You must be logged in to view that page."
 msgstr "请先登录"
+
+#: flashboard/dtos.py:6
+msgid "application related operations"
+msgstr "与应用程序相关的操作"
+
+#: flashboard/dtos.py:9
+msgid "message"
+msgstr "消息"
+
+#: flashboard/dtos.py:13 flashboard/dtos.py:28
+msgid "email address"
+msgstr "电邮地址"
+
+#: flashboard/dtos.py:14
+msgid "user password "
+msgstr "用户密码"
+
+#: flashboard/dtos.py:18
+msgid "API access token"
+msgstr "API访问令牌"
+
+#: flashboard/dtos.py:19 flashboard/dtos.py:23
+msgid "API refresh token"
+msgstr "API刷新令牌"
+
+#: flashboard/dtos.py:27
+msgid "user name"
+msgstr "用户名"
+
+#: flashboard/dtos.py:29
+msgid "password"
+msgstr "密码"
 
 #: flashboard/forms.py:27 flashboard/forms.py:46
 msgid "Email"
@@ -122,53 +174,53 @@ msgstr "确认密码是必填项"
 msgid "Sign up"
 msgstr "注册"
 
-#: flashboard/services.py:106
+#: flashboard/services.py:108
 msgid ""
 "Password is not strong engough(Must including upper case and lower case "
 "and digit)"
 msgstr "密码不够安全（需至少包含一个数字、大写及小写字母）"
 
-#: flashboard/services.py:115
+#: flashboard/services.py:117
 msgid "User name or email is already exist"
 msgstr "用户名或电邮已被使用"
 
-#: flashboard/services.py:137
+#: flashboard/services.py:139
 msgid "Failed to add user into user table"
 msgstr "添加用户失败"
 
-#: flashboard/services.py:148
+#: flashboard/services.py:150
 msgid "Failed to add activation token"
 msgstr "添加激活码失败"
 
-#: flashboard/services.py:154
+#: flashboard/services.py:156
 msgid "Failed to grant default role"
 msgstr "添加默认角色失败"
 
-#: flashboard/services.py:174
+#: flashboard/services.py:176
 msgid "Invalid user with activation token"
 msgstr "无效的用户或者激活码"
 
-#: flashboard/services.py:181
+#: flashboard/services.py:183
 msgid "Invalid activation token"
 msgstr "无效的激活码"
 
-#: flashboard/services.py:185
+#: flashboard/services.py:187
 msgid "Used activation token"
 msgstr "该激活码已被使用"
 
-#: flashboard/services.py:191
+#: flashboard/services.py:193
 msgid "Failed to update actived flag"
 msgstr "刷新用户激活标志失败"
 
-#: flashboard/services.py:323
+#: flashboard/services.py:325
 msgid "Invalid token"
 msgstr "无效的代码"
 
-#: flashboard/services.py:332
+#: flashboard/services.py:334
 msgid "Invalid owner_id"
 msgstr "无效的属主"
 
-#: flashboard/services.py:348
+#: flashboard/services.py:350
 msgid "Invalid or expired token"
 msgstr "无效或已过期代码"
 
