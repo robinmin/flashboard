@@ -6,7 +6,7 @@ import logging.config
 from datetime import datetime
 
 # import flask and extension packages
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, g
 from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
 
@@ -281,19 +281,22 @@ def enable_admin(app):
 
 @babel.localeselector
 def get_locale():
-    # TODO : user prefference support by current_user
     # if a user is logged in, use the locale from the user settings
-    # user = getattr(g, 'user', None)
-    # if user is not None:
-    #     return user.locale
+    user_info = getattr(g, 'user_info', None)
+    if user_info is not None and 'locale' in user_info:
+        return user_info['locale']
 
     # otherwise try to guess the language from the user accept
     # header the browser transmits. The best match wins.
-    from flask import current_app
-    return request.accept_languages.best_match(
-        current_app.config['BABEL_LANGUAGES'].keys() or
-        current_app.config['BABEL_DEFAULT_LOCALE']
-    )
+    if hasattr(g, 'config'):
+        langs = g.config['BABEL_LANGUAGES'] if 'BABEL_LANGUAGES' in g.config else {}
+        default_lang = g.config['BABEL_DEFAULT_LOCALE'] if 'BABEL_DEFAULT_LOCALE' in g.config else 'en'
+        return request.accept_languages.best_match(
+            langs.keys() if len(langs) > 0 else default_lang
+        )
+
+    # final default language
+    return 'en'
 
 # @babel.timezoneselector
 # def get_timezone():
