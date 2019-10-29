@@ -43,11 +43,14 @@ def rbac_module(*module_names):
     return decorator
 
 
-def create_all_roles():
+def create_all_roles(drop_existing=False):
     """ create all pre-defined roles """
 
     from flashboard.database import db_trasaction
     from flashboard.models import RoleModel
+
+    if drop_existing:
+        RoleModel.query.delete()
 
     with db_trasaction() as txn:
         for role, desc in RBAC_ROLES.items():
