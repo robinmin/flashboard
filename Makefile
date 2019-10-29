@@ -56,4 +56,7 @@ i18n:
 setup:
 	dephell deps convert
 
+lint:
+	poetry run flake8 flashboard tests
+
 all: clean install test run
