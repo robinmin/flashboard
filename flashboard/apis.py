@@ -1,12 +1,10 @@
-from flask import Blueprint, request, url_for, current_app, render_template, get_flashed_messages
+from flask import request, url_for, current_app, render_template
 from flask_login import login_url
-from flask_restplus import Resource, Namespace, fields, Api
-from flask_restplus.errors import abort as api_abort
+from flask_restplus import Resource
 from flask_login import current_user
 
 from config.config import all_urls
 from .forms import LoginForm, SignupForm
-from .services import UserService
 from .factories import normal_response, token_required
 from .utils import extract_authorization_from_header
 from .services import UserService, TokenService
