@@ -41,3 +41,4 @@
 - [Token-Based Authentication With Flask](https://realpython.com/token-based-authentication-with-flask/)
 - [Flask by Example](https://realpython.com/flask-by-example-part-1-project-setup/)
 - [The Flask Mega-Tutorial Part XIII: I18n and L10n](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xiii-i18n-and-l10n)
+- [Flask扩展系列(九)–HTTP认证](http://www.bjhee.com/flask-ext9.html)
