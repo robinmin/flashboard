@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db model shell recreate_db migrate i18n all
+.PHONY: clean list install test run db model shell recreate_db migrate i18n setup all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -52,5 +52,8 @@ i18n:
 
 	# compile Translations
 	pybabel compile -d flashboard/translations
+
+setup:
+	dephell deps convert
 
 all: clean install test run
