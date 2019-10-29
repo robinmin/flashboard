@@ -1,4 +1,3 @@
-import jwt
 import datetime
 import random
 
@@ -304,7 +303,7 @@ class TokenService(BaseService):
 
     def get_last_one(self, category, owner_id):
         """ get last available token """
-        from sqlalchemy import or_, and_, desc
+        from sqlalchemy import and_, desc
 
         now = datetime.datetime.utcnow()
         return self.klass.query.filter(and_(
@@ -352,7 +351,7 @@ class TokenService(BaseService):
         """ purge current access token if any valid token has been provided """
 
         result = False
-        with db_trasaction() as txn:
+        with db_trasaction():
             if self.klass.query.filter(
                 self.klass.category == category,
                 self.klass.owner_id == owner_id,
@@ -390,7 +389,7 @@ class TokenService(BaseService):
         owner_id = token.owner_id
 
         result = True
-        with db_trasaction() as txn:
+        with db_trasaction():
             # purge refresh token
             if self.klass.query.filter(
                 self.klass.category == self.TOKEN_JWT_REFRESH,
