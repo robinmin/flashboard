@@ -82,7 +82,7 @@ def init_db(app, db_uri=None):
     BaseModel.query = db_session.query_property()
 
     # create all tables
-    BaseModel.metadata.create_all(bind=engine)
+    # BaseModel.metadata.create_all(bind=engine)
 
     # add handler to teardown
     @app.teardown_request
