@@ -2,74 +2,14 @@ from flask import Blueprint, render_template, abort, jsonify, current_app, reque
 from flask_login import current_user, login_required, login_url
 from flask_babel import gettext as _
 
+from config.config import all_urls
 from .forms import LoginForm, SignupForm
 from .services import UserService
-from .app import login_manager, send_email
+from .app import login_manager, send_email, allow_inactive_login
 from .rbac import rbac_module
 
 bp = Blueprint('flashboard', __name__, template_folder='templates')
 ###############################################################################
-
-# all build-in urls here
-all_urls = {
-    'login': 'flashboard.login',
-    'logout': 'flashboard.logout',
-    'signup': 'flashboard.signup',
-    'confirm_email': 'flashboard.confirm_email',
-    'home': 'flashboard.home',
-
-    'admin': 'admin.index',
-}
-
-
-@login_manager.user_loader
-def user_loader(user_id):
-    """ Given *user_id*, return the associated User object """
-
-    try:
-        # get default language
-        from flask import current_app
-        lang = current_app.config.get('BABEL_DEFAULT_LOCALE', None)
-
-        # user prefference support
-        user = UserService().load_user(user_id)
-        if hasattr(user, 'language'):
-            lang = user.language
-
-        # cache user language prefference into global variable
-        if hasattr(g, 'user_info'):
-            g.user_info['locale'] = lang
-        else:
-            g.user_info = {
-                'locale': lang
-            }
-
-        # cache config information
-        if not hasattr(g, 'config'):
-            g.config = {
-                'BABEL_DEFAULT_LOCALE': current_app.config.get('BABEL_DEFAULT_LOCALE', 'en'),
-                'BABEL_DEFAULT_TIMEZONE': current_app.config.get('BABEL_DEFAULT_TIMEZONE', 'UTC'),
-                'BABEL_LANGUAGES': current_app.config.get('BABEL_LANGUAGES', {}),
-            }
-
-        # special case for confirm_email
-        if request.path:
-            include_inactive = allow_inactive_login(request.path)
-            if include_inactive:
-                return user
-
-        return user if user and user.actived else None
-    except:
-        return None
-
-
-@login_manager.unauthorized_handler
-def unauthorized():
-    """ Redirect unauthorized users to Login page """
-    flash(_('You must be logged in to view that page.'))
-    return redirect(url_for(all_urls['login']))
-
-
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     # Bypass Login screen if user is logged in
@@ -106,23 +46,6 @@ def login():
         url_signup=url_for(all_urls['signup']),
         next=request.args.get('next'),
     )
-
-
-def allow_inactive_login(next):
-    """ helper function to detect current action is allow inactive user login or not """
-
-    if not next:
-        return False
-
-    url_parts = next.split('/')
-    if not isinstance(url_parts, list) or len(url_parts) < 3:
-        return False
-
-    url_prefix = '/'.join(url_parts[0:3])
-    valid_urls = [
-        '/sys/confirm_email',
-    ]
-    return url_prefix in valid_urls
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
