@@ -16,7 +16,7 @@ from flask_cors import CORS
 from flask_babel import Babel, gettext as _
 
 # import application packages
-from config.config import config_by_name
+from config.config import config_factory
 from .database import init_db, create_all_tables, create_session
 
 # current working folder
@@ -57,10 +57,9 @@ def create_app(extra_config_settings={}):
     app = Flask(__name__)
 
     # Load configuration settings
-    config_name = os.getenv('FLASK_ENV', 'production')
-    if config_name not in config_by_name:
-        config_name = 'production'
-    app.config.from_object(config_by_name[config_name])
+    app.config.from_object(config_factory(
+        os.getenv('FLASK_ENV', 'production')
+    ))
 
     # Load extra settings from extra_config_settings param
     if extra_config_settings is not None and len(extra_config_settings) > 0:
