@@ -32,7 +32,7 @@ def app():
         # create the database and load test data
         with app.app_context():
             # import all models
-            import flashboard.models
+            import flashboard.models    # noqa: F401
 
             # create them
             create_all_tables(app)
@@ -230,7 +230,7 @@ def add_metadata_for_app(app):
     # Add meta data for user-role
     create_all_roles(True)
 
-    with db_trasaction() as txn:
+    with db_trasaction():
         # add test user
         usvc = UserService()
 
