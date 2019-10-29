@@ -1,6 +1,6 @@
 import jwt
 
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_login import login_user
 from flask_restplus import Api
 from flask_restplus.errors import abort as api_abort
