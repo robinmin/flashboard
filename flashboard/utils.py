@@ -177,3 +177,15 @@ def get_all_routes(app):
             rule.endpoint, methods, rule))
         result.append(line)
     return result
+
+
+def normal_response(msg='OK', status_code=200):
+    """ helper function for normal response """
+    return {'message': msg or 'OK'}, status_code
+
+
+class ValidationException(Exception):
+    def __init__(self, message='Validation error', error_field_name='unknown_field', *args, **kwargs):
+        super().__init__(args, **kwargs)
+        self.error_field_name = error_field_name
+        self.message = message
