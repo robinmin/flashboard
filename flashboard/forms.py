@@ -2,7 +2,7 @@ from wtforms import StringField, BooleanField, PasswordField, SubmitField, Hidde
 from wtforms.validators import DataRequired, Length, Email, InputRequired
 from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm
-from flask_babel import gettext as _
+from flask_babel import lazy_gettext as _
 
 from .utils import strip_space, strip_space_lower, flatten
 ###############################################################################
