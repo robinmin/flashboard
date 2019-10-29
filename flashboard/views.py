@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, abort, jsonify, current_app, request, redirect, url_for, flash, g
+from sqlalchemy.exc import SQLAlchemyError
+from flask import Blueprint, render_template, current_app, request, redirect, url_for, flash
 from flask_login import current_user, login_required, login_url
 from flask_babel import gettext as _
 
@@ -116,7 +117,7 @@ def confirm_email(token):
                 flash(_('Account already confirmed. Please login.'), 'info')
             else:
                 flash(_('Something goes wrong when comfirming your account.'), 'danger')
-    except:
+    except SQLAlchemyError:
         flash(_('The confirmation link is invalid or has expired.'), 'danger')
 
     if current_user.is_authenticated:
