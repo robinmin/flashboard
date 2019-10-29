@@ -1,18 +1,58 @@
-from flask import request, url_for, current_app, render_template
+import jwt
+
+from flask import request, url_for, current_app, render_template, Blueprint
 from flask_login import login_url
-from flask_restplus import Resource
+from flask_restplus import Resource, Api
 from flask_login import current_user
 from flask_babel import gettext as _
 
 from config.config import all_urls
 from .forms import LoginForm, SignupForm
-from .factories import normal_response, token_required
-from .utils import extract_authorization_from_header
-from .services import UserService, TokenService
+from .utils import normal_response, extract_authorization_from_header, ValidationException
+from .services import UserService, TokenService, token_required
 from .dtos import AppDTO
 from .app import send_email
 
 ###############################################################################
+# blueprints for API
+bp = Blueprint('flashboard-api', __name__)
+
+# API instance
+authorizations = {
+    'JWT': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
+        'description': 'JWT authorization key which must be started with "Bearer "'
+    }
+}
+api = Api(
+    bp,
+    title='Flashboard API',
+    version='1.0',
+    # doc=False,  # disable Swagger UI entirely
+    authorizations=authorizations,
+    description='Flashboard API'
+)
+
+
+@api.errorhandler(ValidationException)
+def handle_validation_exception(error):
+    return {'message': 'Validation error', 'errors': {error.error_field_name: error.message}}, 400
+
+
+@api.errorhandler(jwt.ExpiredSignatureError)
+def handle_expired_signature_error(error):
+    return normal_response('Token expired', 401)
+
+
+@api.errorhandler(jwt.InvalidTokenError)
+@api.errorhandler(jwt.DecodeError)
+@api.errorhandler(jwt.InvalidIssuerError)
+def handle_invalid_token_error(error):
+    return normal_response('Token incorrect, supplied or malformed', 401)
+
+
 # create namespaces instance
 auth_ns = AppDTO.api
 
