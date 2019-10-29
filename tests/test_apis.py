@@ -1,5 +1,3 @@
-import pytest
-
 from flashboard.models import UserModel, RolesUsers
 
 
