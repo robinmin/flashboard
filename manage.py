@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
@@ -37,7 +35,7 @@ if app.config['ENV'] == 'development':
     def recreate_db():
         if input("Are you sure you want drop existing tables and re-create all of them? (y/N)\n").lower() == "y":
             # import all models
-            import flashboard.models
+            import flashboard.models  # noqa: F401
 
             # create them
             create_all_tables(app)

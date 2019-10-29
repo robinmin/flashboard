@@ -11,6 +11,8 @@ from .rbac import rbac_module
 
 bp = Blueprint('flashboard', __name__, template_folder='templates')
 ###############################################################################
+
+
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     # Bypass Login screen if user is logged in

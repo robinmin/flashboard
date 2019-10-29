@@ -1,7 +1,3 @@
-import os
-
-from flask import Flask
-
 from flashboard.app import create_app
 from flashboard.views import login
 

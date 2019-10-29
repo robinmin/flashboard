@@ -57,6 +57,6 @@ setup:
 	dephell deps convert
 
 lint:
-	poetry run flake8 flashboard tests
+	poetry run flake8 *.py flashboard tests
 
 all: clean install test run
