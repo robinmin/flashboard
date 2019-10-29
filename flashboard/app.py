@@ -182,6 +182,8 @@ def init_app(app):
     login_manager.init_app(app)
     login_manager.session_protection = 'strong'
     login_manager.login_view = app.config['APP_URL_WELCOME']
+    login_manager.login_message = _('Unauthorized User')
+    login_manager.login_message_category = 'info'
 
     # enable i18n
     babel.init_app(app)

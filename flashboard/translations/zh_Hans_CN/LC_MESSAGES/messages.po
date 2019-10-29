@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-29 01:15+0800\n"
+"POT-Creation-Date: 2019-10-29 18:29+0800\n"
 "PO-Revision-Date: 2019-10-28 16:44+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -18,9 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: flashboard/app.py:140
+#: flashboard/app.py:146
 msgid "System Error"
 msgstr "系统错误"
+
+#: flashboard/app.py:185
+msgid "Unauthorized User"
+msgstr "未授权的用户"
+
+#: flashboard/app.py:236
+msgid "You must be logged in to view that page."
+msgstr "请先登录"
 
 #: flashboard/forms.py:27 flashboard/forms.py:46
 msgid "Email"
@@ -70,108 +78,104 @@ msgstr "确认密码是必填项"
 msgid "Sign up"
 msgstr "注册"
 
-#: flashboard/services.py:107
+#: flashboard/services.py:106
 msgid ""
 "Password is not strong engough(Must including upper case and lower case "
 "and digit)"
 msgstr "密码不够安全（需至少包含一个数字、大写及小写字母）"
 
-#: flashboard/services.py:116
+#: flashboard/services.py:115
 msgid "User name or email is already exist"
 msgstr "用户名或电邮已被使用"
 
-#: flashboard/services.py:138
+#: flashboard/services.py:137
 msgid "Failed to add user into user table"
 msgstr "添加用户失败"
 
-#: flashboard/services.py:149
+#: flashboard/services.py:148
 msgid "Failed to add activation token"
 msgstr "添加激活码失败"
 
-#: flashboard/services.py:155
+#: flashboard/services.py:154
 msgid "Failed to grant default role"
 msgstr "添加默认角色失败"
 
-#: flashboard/services.py:175
+#: flashboard/services.py:174
 msgid "Invalid user with activation token"
 msgstr "无效的用户或者激活码"
 
-#: flashboard/services.py:182
+#: flashboard/services.py:181
 msgid "Invalid activation token"
 msgstr "无效的激活码"
 
-#: flashboard/services.py:186
+#: flashboard/services.py:185
 msgid "Used activation token"
 msgstr "该激活码已被使用"
 
-#: flashboard/services.py:192
+#: flashboard/services.py:191
 msgid "Failed to update actived flag"
 msgstr "刷新用户激活标志失败"
 
-#: flashboard/services.py:324
+#: flashboard/services.py:323
 msgid "Invalid token"
 msgstr "无效的代码"
 
-#: flashboard/services.py:333
+#: flashboard/services.py:332
 msgid "Invalid owner_id"
 msgstr "无效的属主"
 
-#: flashboard/services.py:349
+#: flashboard/services.py:348
 msgid "Invalid or expired token"
 msgstr "无效或已过期代码"
 
-#: flashboard/views.py:47
-msgid "You must be logged in to view that page."
-msgstr "请先登录"
-
-#: flashboard/views.py:77
+#: flashboard/views.py:42
 msgid "Invalid username or password or inactive user"
 msgstr "无效的用户名、密码或者该用户未激活"
 
-#: flashboard/views.py:81
+#: flashboard/views.py:46
 msgid "Sign In"
 msgstr "登录"
 
-#: flashboard/views.py:136
+#: flashboard/views.py:84
 msgid "Please confirm your email"
 msgstr "请确认你的电邮"
 
-#: flashboard/views.py:140
+#: flashboard/views.py:88
 msgid ""
 "Activation email has been sent to your email box. Please confirm your "
 "email first."
 msgstr "激活邮件已经发送到您的邮箱，请先确认"
 
-#: flashboard/views.py:145
+#: flashboard/views.py:93
 msgid "Unknown error in user registration"
 msgstr "用户注册中发生未知错误"
 
-#: flashboard/templates/signup.html:45 flashboard/views.py:147
+#: flashboard/templates/signup.html:45 flashboard/views.py:95
 msgid "Both passwords must be the same."
 msgstr "两次密码必须一致"
 
-#: flashboard/templates/login.html:39 flashboard/views.py:150
+#: flashboard/templates/login.html:39 flashboard/views.py:98
 msgid "Sign Up"
 msgstr "注册"
 
-#: flashboard/views.py:167
+#: flashboard/views.py:115
 msgid "Unknown error in comfirm user."
 msgstr "确认用户中发生未知错误"
 
-#: flashboard/views.py:171
+#: flashboard/views.py:119
 msgid "Account already confirmed. Please login."
 msgstr "用户已确认，请登录"
 
-#: flashboard/views.py:173
+#: flashboard/views.py:121
 msgid "Something goes wrong when comfirming your account."
 msgstr "在确认用户中，发生了未知错误"
 
-#: flashboard/views.py:175
+#: flashboard/views.py:123
 msgid "The confirmation link is invalid or has expired."
 msgstr "该确认链接无效或者已过期"
 
 #: flashboard/templates/home.html:22 flashboard/templates/home.html:65
-#: flashboard/views.py:203
+#: flashboard/views.py:151
 msgid "Home"
 msgstr "主页"
 
