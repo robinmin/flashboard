@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort, jsonify, current_app, request, redirect, url_for, flash
+from flask import Blueprint, render_template, abort, jsonify, current_app, request, redirect, url_for, flash, g
 from flask_login import current_user, login_required, login_url
 from flask_babel import gettext as _
 
@@ -27,7 +27,37 @@ def user_loader(user_id):
     """ Given *user_id*, return the associated User object """
 
     try:
+        # get default language
+        from flask import current_app
+        lang = current_app.config.get('BABEL_DEFAULT_LOCALE', None)
+
+        # user prefference support
         user = UserService().load_user(user_id)
+        if hasattr(user, 'language'):
+            lang = user.language
+
+        # cache user language prefference into global variable
+        if hasattr(g, 'user_info'):
+            g.user_info['locale'] = lang
+        else:
+            g.user_info = {
+                'locale': lang
+            }
+
+        # cache config information
+        if not hasattr(g, 'config'):
+            g.config = {
+                'BABEL_DEFAULT_LOCALE': current_app.config.get('BABEL_DEFAULT_LOCALE', 'en'),
+                'BABEL_DEFAULT_TIMEZONE': current_app.config.get('BABEL_DEFAULT_TIMEZONE', 'UTC'),
+                'BABEL_LANGUAGES': current_app.config.get('BABEL_LANGUAGES', {}),
+            }
+
+        # special case for confirm_email
+        if request.path:
+            include_inactive = allow_inactive_login(request.path)
+            if include_inactive:
+                return user
+
         return user if user and user.actived else None
     except:
         return None
@@ -165,7 +195,11 @@ def confirm_email(token):
                 flash(_('Something goes wrong when comfirming your account.'), 'danger')
     except:
         flash(_('The confirmation link is invalid or has expired.'), 'danger')
-    return redirect(url_for(all_urls['logout']))
+
+    if current_user.is_authenticated:
+        UserService().logout_user(current_user)
+
+    return redirect(url_for(all_urls['login']))
 
 
 @bp.route('/logout', methods=['GET', 'POST'])
