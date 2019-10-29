@@ -59,12 +59,12 @@ msgid "User Name is required"
 msgstr "用户名是必填项"
 
 #: flashboard/forms.py:55
-msgid "Repeated Password"
-msgstr "重新输入密码"
+msgid "Confirm password"
+msgstr "确认密码"
 
 #: flashboard/forms.py:56
-msgid "Repeated password is required too"
-msgstr "重新输入密码是必填项"
+msgid "Confirm password is required too"
+msgstr "确认密码是必填项"
 
 #: flashboard/forms.py:59
 msgid "Sign up"
