@@ -6,7 +6,7 @@ import logging.config
 from datetime import datetime
 
 # import flask and extension packages
-from flask import Flask, redirect, request, url_for, g
+from flask import Flask, redirect, request, url_for, g, flash
 from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
 
@@ -16,8 +16,9 @@ from flask_cors import CORS
 from flask_babel import Babel, gettext as _
 
 # import application packages
-from config.config import config_factory
+from config.config import config_factory, all_urls
 from .database import init_db, create_all_tables, create_session
+from .services import UserService
 
 # current working folder
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -178,6 +179,71 @@ def init_app(app):
 
     # enable i18n
     babel.init_app(app)
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    """ Given *user_id*, return the associated User object """
+
+    try:
+        # get default language
+        from flask import current_app
+        lang = current_app.config.get('BABEL_DEFAULT_LOCALE', None)
+
+        # user prefference support
+        user = UserService().load_user(user_id)
+        if hasattr(user, 'language'):
+            lang = user.language
+
+        # cache user language prefference into global variable
+        if hasattr(g, 'user_info'):
+            g.user_info['locale'] = lang
+        else:
+            g.user_info = {
+                'locale': lang
+            }
+
+        # cache config information
+        if not hasattr(g, 'config'):
+            g.config = {
+                'BABEL_DEFAULT_LOCALE': current_app.config.get('BABEL_DEFAULT_LOCALE', 'en'),
+                'BABEL_DEFAULT_TIMEZONE': current_app.config.get('BABEL_DEFAULT_TIMEZONE', 'UTC'),
+                'BABEL_LANGUAGES': current_app.config.get('BABEL_LANGUAGES', {}),
+            }
+
+        # special case for confirm_email
+        if request.path:
+            include_inactive = allow_inactive_login(request.path)
+            if include_inactive:
+                return user
+
+        return user if user and user.actived else None
+    except:
+        return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """ Redirect unauthorized users to Login page """
+    flash(_('You must be logged in to view that page.'))
+    return redirect(url_for(all_urls['login']))
+
+
+def allow_inactive_login(next):
+    """ helper function to detect current action is allow inactive user login or not """
+
+    if not next:
+        return False
+
+    url_parts = next.split('/')
+    if not isinstance(url_parts, list) or len(url_parts) < 3:
+        return False
+
+    url_prefix = '/'.join(url_parts[0:3])
+    valid_urls = [
+        '/sys/confirm_email',
+    ]
+    return url_prefix in valid_urls
 
 
 def send_email(app, to, subject, template):
