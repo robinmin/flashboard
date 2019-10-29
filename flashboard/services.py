@@ -4,6 +4,7 @@ import random
 
 from sqlalchemy import or_
 from flask_login import login_user, logout_user
+from flask_babel import lazy_gettext as _
 
 from config.rbac import DEFAULT_ROLE
 from .database import db_trasaction, save_item, BaseModel
@@ -80,18 +81,6 @@ class UserService(BaseService):
         if not user:
             return None
 
-        # rst = self.klass.query.filter(self.klass.id == user.id).update({
-        #     self.klass.authenticated: True,
-        #     self.klass.last_login_at: user.current_login_at,
-        #     self.klass.last_login_ip: user.current_login_ip,
-        #     self.klass.current_login_at: datetime.datetime.utcnow(),
-        #     self.klass.current_login_ip: login_ip,
-        #     self.klass.login_count: user.login_count + 1,
-        # })
-        # if rst and rst > 0:
-        #     return login_user(user, remember=remember)
-        # return None
-
         user.authenticated = True
         user.last_login_at = user.current_login_at
         user.last_login_ip = user.current_login_ip
@@ -115,7 +104,8 @@ class UserService(BaseService):
 
         # check complecity of password
         if not is_strong(password):
-            msg = 'Password is not strong engough(Must including upper case and lower case and digit)'
+            msg = _(
+                'Password is not strong engough(Must including upper case and lower case and digit)')
         else:
             # check existence of user name and email
             user = self.klass.query.filter(or_(
@@ -123,7 +113,7 @@ class UserService(BaseService):
                 self.klass.email == email
             )).first()
             if user:
-                msg = 'User name or email is already exist'
+                msg = _('User name or email is already exist')
             else:
                 from flask import current_app
                 public_salt = current_app.config['SECURITY_PASSWORD_SALT']
@@ -145,7 +135,7 @@ class UserService(BaseService):
                         # add user
                         txn.try_assert(
                             not txn.save_item(user),
-                            'Failed to add user into user table'
+                            _('Failed to add user into user table')
                         )
 
                         # generate activation token
@@ -156,13 +146,13 @@ class UserService(BaseService):
                             duration=7200
                         )
                         txn.try_assert(
-                            not token, 'Failed to add activation token'
+                            not token, _('Failed to add activation token')
                         )
 
                         # grant default role
                         txn.try_assert(
                             not self.grant_role(user, DEFAULT_ROLE),
-                            'Failed to grant default role'
+                            _('Failed to grant default role')
                         )
                 except Exception as exp:
                     msg = str(exp)
@@ -182,24 +172,24 @@ class UserService(BaseService):
                 user = self.load_raw_user(user_info)
                 txn.try_assert(
                     user is None,
-                    'Invalid user with activation token'
+                    _('Invalid user with activation token')
                 )
                 token, rsp_msg = tsvc.verify(
                     TokenService.TOKEN_USER_ACTIVATION, user.id, act_token
                 )
                 txn.try_assert(
                     token is None or token.access_count is None,
-                    rsp_msg or 'Invalid activation token'
+                    rsp_msg or _('Invalid activation token')
                 )
                 txn.try_assert(
                     token.access_count != 1,
-                    'Used activation token'
+                    _('Used activation token')
                 )
                 user.actived = True
                 user.confirmed_at = datetime.datetime.utcnow()
                 txn.try_assert(
                     not txn.save_item(user),
-                    'Failed to update actived flag'
+                    _('Failed to update actived flag')
                 )
         except Exception as exp:
             msg = str(exp)
@@ -293,6 +283,7 @@ class TokenService(BaseService):
 
     def create(self, category, user_id, duration=7200, random_seed=0):
         """ generate new token """
+
         token = self.klass()
         token.create_on = datetime.datetime.utcnow()
         token.expiry_on = token.create_on + \
@@ -330,7 +321,7 @@ class TokenService(BaseService):
         """
 
         if not token:
-            return None, 'Invalid token'
+            return None, _('Invalid token')
 
         if owner_id is None and category in [self.TOKEN_JWT_ACCESS, self.TOKEN_JWT_REFRESH]:
             # decode owner_id from provided token
@@ -339,7 +330,7 @@ class TokenService(BaseService):
                 owner_id = int(payload['uid'])
 
         if not owner_id:
-            return None, 'Invalid owner_id'
+            return None, _('Invalid owner_id')
 
         # retrieve stored token and check with provided one
         stored_token = self.get_last_one(category, owner_id)
@@ -355,7 +346,7 @@ class TokenService(BaseService):
             stored_token.access_count = (stored_token.access_count or 0) + 1
             if self.save_item(stored_token):
                 return stored_token, ''
-        return None, 'Invalid or expired token'
+        return None, _('Invalid or expired token')
 
     def purge(self, category, owner_id, token):
         """ purge current access token if any valid token has been provided """
