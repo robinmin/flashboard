@@ -6,6 +6,7 @@ import datetime
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from flask import current_app, request
+from flask_babel import gettext as _
 
 PYTHON2 = sys.version_info < (3, 0)
 
@@ -185,7 +186,7 @@ def normal_response(msg='OK', status_code=200):
 
 
 class ValidationException(Exception):
-    def __init__(self, message='Validation error', error_field_name='unknown_field', *args, **kwargs):
+    def __init__(self, message=_('Validation error'), error_field_name='unknown_field', *args, **kwargs):
         super().__init__(args, **kwargs)
         self.error_field_name = error_field_name
         self.message = message
