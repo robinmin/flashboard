@@ -146,9 +146,14 @@ class TestingConfig(Config):
 
 
 ###############################################################################
-config_by_name = dict(
-    production=ProductionConfig,
-    staging=StagingConfig,
-    development=DevelopmentConfig,
-    testing=TestingConfig,
-)
+
+def config_factory(stage):
+    """ config factory """
+
+    config_mapping = {
+        'production': ProductionConfig,
+        'staging': StagingConfig,
+        'development': DevelopmentConfig,
+        'testing': TestingConfig,
+    }
+    return config_mapping[stage] if stage in config_mapping else config_mapping['production']
