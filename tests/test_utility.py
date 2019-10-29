@@ -1,5 +1,5 @@
 import math
-from flashboard.utils import *
+from flashboard.utils import as_map, generate_random_salt
 
 ###############################################################################
 #
