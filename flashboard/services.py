@@ -4,11 +4,13 @@ import random
 from sqlalchemy import or_
 from flask_login import login_user, logout_user
 from flask_babel import lazy_gettext as _
+from flask_restplus.errors import abort as api_abort
 
 from config.rbac import DEFAULT_ROLE
 from .database import db_trasaction, save_item, BaseModel
 from .models import UserModel, RoleModel, RolesUsers, TokenModel
-from .utils import is_strong, prepare_for_hash, generate_random_salt, encode_jwt_token, decode_jwt_token
+from .utils import is_strong, prepare_for_hash, generate_random_salt
+from .utils import encode_jwt_token, decode_jwt_token, extract_authorization_from_header
 
 
 class BaseService(object):
@@ -407,3 +409,32 @@ class TokenService(BaseService):
                 result = False
 
         return result
+
+
+def token_required(func):
+    """ decorator for API token """
+
+    def wrapper(*args, **kwargs):
+        # verify access token
+        access_token = extract_authorization_from_header()
+        if access_token:
+            tsvc = TokenService()
+            token, msg = tsvc.verify(
+                TokenService.TOKEN_JWT_ACCESS, None, access_token
+            )
+            if token and token.access_count is not None:
+                # get user information and inject into global scope
+                user = UserService().load_raw_user(token.owner_id)
+                if user.actived:
+                    login_user(user)
+                return func(*args, **kwargs)
+            else:
+                api_abort(403, 'Valid API Token required ({})'.format(
+                    msg or 'Invalid token'
+                ))
+        else:
+            api_abort(403, 'Valid API Token required (Invalid header)')
+
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper
