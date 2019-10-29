@@ -12,38 +12,6 @@ from .dtos import AppDTO
 from .app import send_email
 
 ###############################################################################
-
-# class AppDTO:
-#     api = Namespace('app', description='application related operations')
-
-#     # normal response message
-#     message = api.model('message', {
-#         'message': fields.String(description='user Identifier')
-#     })
-
-#     # data form for uers register
-#     user = api.model('user', {
-#         'email': fields.String(required=True, description='user email address'),
-#         'username': fields.String(required=True, description='user username'),
-#         'password': fields.String(required=True, description='user password'),
-#         'public_id': fields.String(description='user Identifier')
-#     })
-
-#     user_auth = api.model('auth_details', {
-#         'email': fields.String(required=True, description='The email address'),
-#         'password': fields.String(required=True, description='The user password '),
-#     })
-
-#     return_token_model = api.model('ReturnToken', {
-#         'access_token': fields.String(required=True),
-#         'refresh_token': fields.String(required=True)
-#     })
-
-#     # register_model = api.model('Register', {
-#     #     'username': fields.String(required=True, description='user username'),
-#     #     'password': fields.String(required=True, description='user password')
-#     # })
-
 # create namespaces instance
 auth_ns = AppDTO.api
 
