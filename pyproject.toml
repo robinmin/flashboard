@@ -30,6 +30,8 @@ pytest-cov = "^2.8"
 autopep8 = "^1.4"
 flask-sqlacodegen = "^1.1"
 flask-debugtoolbar = "^0.10.1"
+pylint = "^2.4"
+flake8 = "^3.7"
 
 [tool.dephell.main]
 from = {format = "poetry", path = "pyproject.toml"}
