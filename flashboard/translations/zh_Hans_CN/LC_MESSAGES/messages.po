@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-28 23:48+0800\n"
+"POT-Creation-Date: 2019-10-29 01:15+0800\n"
 "PO-Revision-Date: 2019-10-28 16:44+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -22,106 +22,156 @@ msgstr ""
 msgid "System Error"
 msgstr "系统错误"
 
-#: flashboard/forms.py:26 flashboard/forms.py:45
+#: flashboard/forms.py:27 flashboard/forms.py:46
 msgid "Email"
 msgstr "电邮"
 
-#: flashboard/forms.py:27 flashboard/forms.py:46
+#: flashboard/forms.py:28 flashboard/forms.py:47
 msgid "Email is required"
 msgstr "电邮是必填项"
 
-#: flashboard/forms.py:29 flashboard/forms.py:48
+#: flashboard/forms.py:30 flashboard/forms.py:49
 msgid "Please input valid email, e.g. : username@domain.com"
 msgstr "请输入有效的电邮，如username@domain.com"
 
-#: flashboard/forms.py:31 flashboard/forms.py:50
+#: flashboard/forms.py:32 flashboard/forms.py:51
 msgid "Password"
 msgstr "密码"
 
-#: flashboard/forms.py:32 flashboard/forms.py:51
+#: flashboard/forms.py:33 flashboard/forms.py:52
 msgid "Password is required"
 msgstr "密码是必填项"
 
-#: flashboard/forms.py:35
+#: flashboard/forms.py:36
 msgid "Remember me"
 msgstr "记住登录"
 
-#: flashboard/forms.py:36 flashboard/templates/signup.html:53
+#: flashboard/forms.py:37 flashboard/templates/signup.html:53
 msgid "Login"
 msgstr "登录"
 
-#: flashboard/forms.py:41
+#: flashboard/forms.py:42
 msgid "User Name"
 msgstr "用户名"
 
-#: flashboard/forms.py:42
+#: flashboard/forms.py:43
 msgid "User Name is required"
 msgstr "用户名是必填项"
 
-#: flashboard/forms.py:54
+#: flashboard/forms.py:55
 msgid "Repeated Password"
 msgstr "重新输入密码"
 
-#: flashboard/forms.py:55
+#: flashboard/forms.py:56
 msgid "Repeated password is required too"
 msgstr "重新输入密码是必填项"
 
-#: flashboard/forms.py:58
+#: flashboard/forms.py:59
 msgid "Sign up"
 msgstr "注册"
 
-#: flashboard/views.py:39
+#: flashboard/services.py:107
+msgid ""
+"Password is not strong engough(Must including upper case and lower case "
+"and digit)"
+msgstr "密码不够安全（需至少包含一个数字、大写及小写字母）"
+
+#: flashboard/services.py:116
+msgid "User name or email is already exist"
+msgstr "用户名或电邮已被使用"
+
+#: flashboard/services.py:138
+msgid "Failed to add user into user table"
+msgstr "添加用户失败"
+
+#: flashboard/services.py:149
+msgid "Failed to add activation token"
+msgstr "添加激活码失败"
+
+#: flashboard/services.py:155
+msgid "Failed to grant default role"
+msgstr "添加默认角色失败"
+
+#: flashboard/services.py:175
+msgid "Invalid user with activation token"
+msgstr "无效的用户或者激活码"
+
+#: flashboard/services.py:182
+msgid "Invalid activation token"
+msgstr "无效的激活码"
+
+#: flashboard/services.py:186
+msgid "Used activation token"
+msgstr "该激活码已被使用"
+
+#: flashboard/services.py:192
+msgid "Failed to update actived flag"
+msgstr "刷新用户激活标志失败"
+
+#: flashboard/services.py:324
+msgid "Invalid token"
+msgstr "无效的代码"
+
+#: flashboard/services.py:333
+msgid "Invalid owner_id"
+msgstr "无效的属主"
+
+#: flashboard/services.py:349
+msgid "Invalid or expired token"
+msgstr "无效或已过期代码"
+
+#: flashboard/views.py:47
 msgid "You must be logged in to view that page."
 msgstr "请先登录"
 
-#: flashboard/views.py:69
+#: flashboard/views.py:77
 msgid "Invalid username or password or inactive user"
 msgstr "无效的用户名、密码或者该用户未激活"
 
-#: flashboard/views.py:73
+#: flashboard/views.py:81
 msgid "Sign In"
 msgstr "登录"
 
-#: flashboard/views.py:128
+#: flashboard/views.py:136
 msgid "Please confirm your email"
 msgstr "请确认你的电邮"
 
-#: flashboard/views.py:132
+#: flashboard/views.py:140
 msgid ""
 "Activation email has been sent to your email box. Please confirm your "
 "email first."
 msgstr "激活邮件已经发送到您的邮箱，请先确认"
 
-#: flashboard/views.py:137
+#: flashboard/views.py:145
 msgid "Unknown error in user registration"
 msgstr "用户注册中发生未知错误"
 
-#: flashboard/templates/signup.html:45 flashboard/views.py:139
+#: flashboard/templates/signup.html:45 flashboard/views.py:147
 msgid "Both passwords must be the same."
 msgstr "两次密码必须一致"
 
-#: flashboard/templates/login.html:39 flashboard/views.py:142
+#: flashboard/templates/login.html:39 flashboard/views.py:150
 msgid "Sign Up"
 msgstr "注册"
 
-#: flashboard/views.py:159
+#: flashboard/views.py:167
 msgid "Unknown error in comfirm user."
 msgstr "确认用户中发生未知错误"
 
-#: flashboard/views.py:163
+#: flashboard/views.py:171
 msgid "Account already confirmed. Please login."
-msgstr "用户已确认，请登"
+msgstr "用户已确认，请登录"
 
-#: flashboard/views.py:165
+#: flashboard/views.py:173
 msgid "Something goes wrong when comfirming your account."
 msgstr "在确认用户中，发生了未知错误"
 
-#: flashboard/views.py:167
+#: flashboard/views.py:175
 msgid "The confirmation link is invalid or has expired."
 msgstr "该确认链接无效或者已过期"
 
 #: flashboard/templates/home.html:22 flashboard/templates/home.html:65
-#: flashboard/views.py:191
+#: flashboard/views.py:203
 msgid "Home"
 msgstr "主页"
 
