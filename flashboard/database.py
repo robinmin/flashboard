@@ -3,6 +3,7 @@ import sys
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 
 # database engin
 engine = None
@@ -60,7 +61,7 @@ def save_item(obj_item):
             db_session.commit()
         else:
             db_session.flush()
-    except:
+    except SQLAlchemyError:
         exp = sys.exc_info()
         if not __mannual_on:
             db_session.rollback()
@@ -92,7 +93,7 @@ def init_db(app, db_uri=None):
 
         try:
             db_session.commit()
-        except:
+        except SQLAlchemyError:
             db_session.rollback()
         finally:
             db_session.close()
