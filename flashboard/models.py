@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from werkzeug.security import generate_password_hash, check_password_hash
 from passlib.apps import custom_app_context as pwd_context
 
 from flask_login import UserMixin
@@ -126,5 +125,31 @@ class TokenModel(BaseModel):
     random_seed = Column(Integer(), default=0, nullable=True)
 
     owner_id = Column('user_id', Integer(), ForeignKey('users.id'))
+
+
+# class DBVarsModel(BaseModel):
+#     __tablename__ = 'DB_VARS'
+#     # - id
+#     # - table_id
+#     # - name
+#     # - display name
+#     # - external name
+#     # - source table
+#     # - source column
+#     # - biz_category
+#     # - data_type
+#     # - logic_type
+#     # - description
+#     # - url_detail
+
+
+# class DBTableModel(BaseModel):
+#     __tablename__ = 'DB_TABLES'
+#     # - id
+
+
+# class DBProjectModel(BaseModel):
+#     __tablename__ = 'DB_PROJECTS'
+#     # - id
 
 ###############################################################################
