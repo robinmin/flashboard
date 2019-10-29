@@ -14,36 +14,37 @@ from flashboard.services import UserService
 def app():
     """Create and configure a new app instance for each test."""
     # create a temporary file to isolate the database for each test
-    db_fd, db_path = tempfile.mkstemp()
 
-    # create the app with common test config
-    app = create_app({
-        # force into the testing model
-        'TESTING': True,
+    try:
+        db_fd, db_path = tempfile.mkstemp()
+        # create the app with common test config
+        app = create_app({
+            # force into the testing model
+            'TESTING': True,
 
-        # leverage temp file system as the SQLite database
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
+            # leverage temp file system as the SQLite database
+            'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
 
-        # Disable CSRF tokens in the Forms (only valid for testing purposes!)
-        'WTF_CSRF_ENABLED': False
-    })
+            # Disable CSRF tokens in the Forms (only valid for testing purposes!)
+            'WTF_CSRF_ENABLED': False
+        })
 
-    # create the database and load test data
-    with app.app_context():
-        # import all models
-        import flashboard.models
+        # create the database and load test data
+        with app.app_context():
+            # import all models
+            import flashboard.models
 
-        # create them
-        create_all_tables(app)
+            # create them
+            create_all_tables(app)
 
-        # add meta data
-        add_metadata_for_app(app)
+            # add meta data
+            add_metadata_for_app(app)
 
-        yield app
-
-    # close and remove the temporary database
-    os.close(db_fd)
-    os.unlink(db_path)
+            yield app
+    finally:
+        # close and remove the temporary database
+        os.close(db_fd)
+        os.unlink(db_path)
 
 
 @pytest.fixture
@@ -227,7 +228,7 @@ class ApiProxy(object):
 
 def add_metadata_for_app(app):
     # Add meta data for user-role
-    create_all_roles()
+    create_all_roles(True)
 
     with db_trasaction() as txn:
         # add test user
