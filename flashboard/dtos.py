@@ -1,4 +1,4 @@
-from flask_restplus import Resource, Namespace, fields, Api
+from flask_restplus import Namespace, fields
 
 
 class AppDTO:
