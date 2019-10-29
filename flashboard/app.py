@@ -1,6 +1,7 @@
 # import system packages
 import os
 import json
+import time
 import logging
 import logging.config
 
@@ -41,7 +42,12 @@ def load_json_config(conf_file):
     if not os.path.isfile(conf_file):
         print('Config file is not exist : ' + conf_file)
         return dict()
-    config = json.load(open(conf_file), encoding='UTF-8')
+
+    data = ''
+    today = time.strftime('%Y%m%d')
+    with open(conf_file, 'r') as file:
+        data = file.read()
+    config = json.loads(data.replace('{today}', today), encoding='UTF-8')
     return config
 
 
