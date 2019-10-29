@@ -2,6 +2,7 @@ from flask import request, url_for, current_app, render_template
 from flask_login import login_url
 from flask_restplus import Resource
 from flask_login import current_user
+from flask_babel import gettext as _
 
 from config.config import all_urls
 from .forms import LoginForm, SignupForm
@@ -20,7 +21,7 @@ auth_ns = AppDTO.api
 class Login(Resource):
     @auth_ns.expect(AppDTO.auth_details, validate=True)
     @auth_ns.response(200, 'Success', AppDTO.return_token)
-    @auth_ns.response(401, 'Invalid username or password or inactive user')
+    @auth_ns.response(401, _('Invalid username or password or inactive user'))
     def post(self):
         """ API interface for user login """
 
@@ -59,14 +60,14 @@ class Login(Resource):
                     return {'access_token': access_token, 'refresh_token': refresh_token}, 200
                 else:
                     status_code = 401
-                    msg = 'Failed to generate API tokens'
+                    msg = _('Failed to generate API tokens')
             else:
                 status_code = 401
-                msg = 'Invalid username or password or inactive user'
+                msg = _('Invalid username or password or inactive user')
         else:
             status_code = 401
-            msg = form.extract_errors() or 'Invalid username or password'
-        return auth_ns.abort(status_code, msg or 'Unknown error')
+            msg = form.extract_errors() or _('Invalid username or password')
+        return auth_ns.abort(status_code, msg or _('Unknown error'))
 
 
 @auth_ns.route('/logout')
@@ -92,7 +93,7 @@ class Logout(Resource):
 class Refresh(Resource):
     @auth_ns.expect(AppDTO.refresh_details, validate=True)
     @auth_ns.response(200, 'Success', AppDTO.return_token)
-    @auth_ns.response(401, 'Invalid refresh token')
+    @auth_ns.response(401, _('Invalid refresh token'))
     @auth_ns.doc(security='JWT')
     def post(self):
         """ API interface for refresh access token """
@@ -100,7 +101,7 @@ class Refresh(Resource):
         # get refresh token from parameter
         refresh_token = auth_ns.payload['refresh_token'] if 'refresh_token' in auth_ns.payload else ''
         if refresh_token is None:
-            return auth_ns.abort(401, 'Invalid refresh token')
+            return auth_ns.abort(401, _('Invalid refresh token'))
 
         tsvc = TokenService()
 
@@ -110,7 +111,7 @@ class Refresh(Resource):
         )
 
         if token is None or token.access_count is None:
-            return auth_ns.abort(401, msg or 'Invalid or expired refresh token')
+            return auth_ns.abort(401, msg or _('Invalid or expired refresh token'))
 
         # purge existing tokens
         tsvc.purge_auth_tokens(token)
@@ -120,21 +121,21 @@ class Refresh(Resource):
         if access_token and refresh_token:
             return {'access_token': access_token, 'refresh_token': refresh_token}, 200
 
-        return auth_ns.abort(401, 'Failed to re-generate API tokens')
+        return auth_ns.abort(401, _('Failed to re-generate API tokens'))
 
 
 @auth_ns.route('/register')
 class Register(Resource):
     @auth_ns.expect(AppDTO.register_details, validate=True)
     @auth_ns.marshal_with(AppDTO.return_message)
-    @auth_ns.response(401, 'username or password incorrect')
+    @auth_ns.response(401, _('username or password incorrect'))
     @auth_ns.doc(security='JWT')
     @token_required
     def post(self):
         """ API interface for user registration """
 
         if not current_user.is_authenticated:
-            return auth_ns.abort(401, 'Invalid user')
+            return auth_ns.abort(401, _('Invalid user'))
 
         # load submitted data
         name = auth_ns.payload['name'] if 'name' in auth_ns.payload else ''
@@ -171,14 +172,14 @@ class Register(Resource):
                 html = render_template(
                     'activate.html', confirm_url=confirm_url
                 )
-                subject = 'Please confirm your email'
+                subject = _('Please confirm your email')
                 send_email(current_app, user.email, subject, html)
 
                 return normal_response()
             else:
                 status_code = 401
-                msg = error or 'Unknown error in user registration'
+                msg = error or _('Unknown error in user registration')
         else:
             status_code = 401
-            msg = form.extract_errors() or 'Invalid username or password'
-        return auth_ns.abort(status_code, msg or 'Unknown error')
+            msg = form.extract_errors() or _('Invalid username or password')
+        return auth_ns.abort(status_code, msg or _('Unknown error'))

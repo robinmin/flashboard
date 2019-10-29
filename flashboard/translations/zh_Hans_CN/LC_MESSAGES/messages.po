@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-29 18:29+0800\n"
+"POT-Creation-Date: 2019-10-29 23:17+0800\n"
 "PO-Revision-Date: 2019-10-28 16:44+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -17,6 +17,50 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+
+#: flashboard/apis.py:24 flashboard/apis.py:66 flashboard/views.py:42
+msgid "Invalid username or password or inactive user"
+msgstr "无效的用户名、密码或者该用户未激活"
+
+#: flashboard/apis.py:63
+msgid "Failed to generate API tokens"
+msgstr "生成API令牌失败"
+
+#: flashboard/apis.py:69 flashboard/apis.py:184
+msgid "Invalid username or password"
+msgstr "无效的用户名或密码"
+
+#: flashboard/apis.py:70 flashboard/apis.py:185
+msgid "Unknown error"
+msgstr "未知错误"
+
+#: flashboard/apis.py:96 flashboard/apis.py:104
+msgid "Invalid refresh token"
+msgstr "无效的刷新令牌"
+
+#: flashboard/apis.py:114
+msgid "Invalid or expired refresh token"
+msgstr "无效或者已经失效的刷新令牌"
+
+#: flashboard/apis.py:124
+msgid "Failed to re-generate API tokens"
+msgstr "重新生成API令牌失败"
+
+#: flashboard/apis.py:131
+msgid "username or password incorrect"
+msgstr "无效的用户名或密码"
+
+#: flashboard/apis.py:138
+msgid "Invalid user"
+msgstr "无效用户"
+
+#: flashboard/apis.py:175 flashboard/views.py:84
+msgid "Please confirm your email"
+msgstr "请确认你的电邮"
+
+#: flashboard/apis.py:181 flashboard/views.py:93
+msgid "Unknown error in user registration"
+msgstr "用户注册中发生未知错误"
 
 #: flashboard/app.py:146
 msgid "System Error"
@@ -128,27 +172,15 @@ msgstr "无效的属主"
 msgid "Invalid or expired token"
 msgstr "无效或已过期代码"
 
-#: flashboard/views.py:42
-msgid "Invalid username or password or inactive user"
-msgstr "无效的用户名、密码或者该用户未激活"
-
 #: flashboard/views.py:46
 msgid "Sign In"
 msgstr "登录"
-
-#: flashboard/views.py:84
-msgid "Please confirm your email"
-msgstr "请确认你的电邮"
 
 #: flashboard/views.py:88
 msgid ""
 "Activation email has been sent to your email box. Please confirm your "
 "email first."
 msgstr "激活邮件已经发送到您的邮箱，请先确认"
-
-#: flashboard/views.py:93
-msgid "Unknown error in user registration"
-msgstr "用户注册中发生未知错误"
 
 #: flashboard/templates/signup.html:45 flashboard/views.py:95
 msgid "Both passwords must be the same."
