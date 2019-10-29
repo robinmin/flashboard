@@ -52,8 +52,8 @@ class SignupForm(FlaskForm, FormMixin):
         DataRequired(_('Password is required')),
         Length(6, 12),
     ], filters=[strip_space])
-    password2 = PasswordField(_('Repeated Password'), validators=[
-        DataRequired(_('Repeated password is required too')),
+    password2 = PasswordField(_('Confirm password'), validators=[
+        DataRequired(_('Confirm password is required too')),
         Length(6, 12),
     ], filters=[strip_space])
     submit = SubmitField(_('Sign up'))
