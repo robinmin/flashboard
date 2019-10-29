@@ -3,9 +3,9 @@ import os
 import json
 import logging
 import logging.config
-from datetime import datetime
 
 # import flask and extension packages
+from sqlalchemy.exc import SQLAlchemyError
 from flask import Flask, redirect, request, url_for, g, flash
 from flask_login import LoginManager, current_user
 from flask_mail import Mail, Message
@@ -17,7 +17,7 @@ from flask_babel import Babel, gettext as _
 
 # import application packages
 from config.config import config_factory, all_urls
-from .database import init_db, create_all_tables, create_session
+from .database import init_db, create_session
 from .services import UserService
 
 # current working folder
@@ -52,7 +52,7 @@ def create_app(extra_config_settings={}):
     log_config = load_json_config(os.path.join(basedir, 'config/logging.json'))
     logging.config.dictConfig(log_config)
 
-    log = logging.getLogger(__name__)
+    # log = logging.getLogger(__name__)
 
     # Instantiate Flask
     app = Flask(__name__)
@@ -82,7 +82,7 @@ def create_app(extra_config_settings={}):
 
         # disable intercept redirect
         app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-        toolbar = DebugToolbarExtension(app)
+        DebugToolbarExtension(app)
 
     # enable celery
     if app.config['ENABLE_CELERY']:
@@ -218,7 +218,7 @@ def user_loader(user_id):
                 return user
 
         return user if user and user.actived else None
-    except:
+    except SQLAlchemyError:
         return None
 
 
