@@ -4,6 +4,7 @@ from flask_restplus import Resource, Namespace, fields, Api
 from flask_restplus.errors import abort as api_abort
 from flask_login import current_user
 
+from config.config import all_urls
 from .forms import LoginForm, SignupForm
 from .services import UserService
 from .factories import normal_response, token_required
@@ -13,17 +14,6 @@ from .dtos import AppDTO
 from .app import send_email
 
 ###############################################################################
-
-# all build-in urls here
-all_urls = {
-    'login': 'flashboard.login',
-    'logout': 'flashboard.logout',
-    'signup': 'flashboard.signup',
-    'confirm_email': 'flashboard.confirm_email',
-    'home': 'flashboard.home',
-
-    'admin': 'admin.index',
-}
 
 # class AppDTO:
 #     api = Namespace('app', description='application related operations')
