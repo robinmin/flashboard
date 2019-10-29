@@ -97,8 +97,7 @@ def create_app(extra_config_settings={}):
     # register all relevant blueprints
     with app.app_context():
         if app.config['ENABLE_BUILDIN_API']:
-            from .factories import api, bp as bp_api
-            from .apis import auth_ns
+            from .apis import auth_ns, api, bp as bp_api
 
             # avoid to check CSRF on APIs
             csrf_protect.exempt(bp_api)
