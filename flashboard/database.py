@@ -1,9 +1,10 @@
 import sys
 
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
+
+from .base import BaseModel
 
 # database engin
 engine = None
@@ -11,11 +12,9 @@ engine = None
 # db sessioon
 db_session = None
 
-# base class for all models
-BaseModel = declarative_base()
-
 # internal control flag for mannual db transaction
 __mannual_on = False
+###############################################################################
 
 
 class db_trasaction():
