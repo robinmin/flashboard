@@ -4,10 +4,10 @@ from passlib.apps import custom_app_context as pwd_context
 
 from flask_login import UserMixin
 
-from .database import BaseModel
-
-
+from .base import BaseModel
 ###############################################################################
+
+
 class RolesUsers(BaseModel):
     __tablename__ = 'roles_users'
 
