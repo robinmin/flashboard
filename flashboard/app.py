@@ -32,6 +32,11 @@ mail = Mail()
 csrf_protect = CSRFProtect()
 
 babel = Babel()
+
+# global instance
+log = None
+celery = None
+
 ###############################################################################
 
 
@@ -58,7 +63,8 @@ def create_app(extra_config_settings={}):
     log_config = load_json_config(os.path.join(basedir, 'config/logging.json'))
     logging.config.dictConfig(log_config)
 
-    # log = logging.getLogger(__name__)
+    global log
+    log = logging.getLogger(__name__)
 
     # Instantiate Flask
     app = Flask(__name__)
@@ -282,32 +288,44 @@ def enable_sentry(app):
     )
 
 
-def enable_celery(app):
+def enable_celery(app=None):
     """
         create instance of celery, then you can customize task as shown below:
 
-            celery = init_celery(flask_app)
+            celery = enable_celery(flask_app)
 
             @celery.task()
             def add_together(a, b):
                 return a + b
     """
+    global celery
+    if celery:
+        return celery
 
     from celery import Celery
+
+    if app is None:
+        app = create_app()
 
     celery = Celery(
         app.import_name,
         backend=app.config['CELERY_RESULT_BACKEND'],
         broker=app.config['CELERY_BROKER_URL']
     )
+
     celery.conf.update(app.config)
 
-    class ContextTask(celery.Task):
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
         def __call__(self, *args, **kwargs):
             with app.app_context():
-                return self.run(*args, **kwargs)
+                return TaskBase.__call__(self, *args, **kwargs)
 
     celery.Task = ContextTask
+
     return celery
 
 
