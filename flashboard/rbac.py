@@ -3,9 +3,10 @@ import functools
 from flask import abort, current_app
 from flask_login import current_user
 
-from config.rbac import RBAC_CONTROL, RBAC_ROLES
+from config.config import Settings
 from .utils import flatten
 from .services import UserService
+###############################################################################
 
 
 def rbac_module(*module_names):
@@ -18,8 +19,9 @@ def rbac_module(*module_names):
             usvc = UserService()
 
             # get mapping
+            settings = Settings()
             mapped_roles = flatten([
-                RBAC_CONTROL[module] if module in RBAC_CONTROL else None for module in module_names
+                settings.RBAC_CONTROL[module] if module in settings.RBAC_CONTROL else None for module in module_names
             ])
             # de-duplicate
             mapped_roles = list(set(mapped_roles))
@@ -53,5 +55,5 @@ def create_all_roles(drop_existing=False):
         RoleModel.query.delete()
 
     with db_trasaction() as txn:
-        for role, desc in RBAC_ROLES.items():
+        for role, desc in Settings().RBAC_ROLES.items():
             txn.save_item(RoleModel(role, desc))
