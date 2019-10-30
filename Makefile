@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db model shell recreate_db migrate i18n setup lint all
+.PHONY: clean list install test run db model shell recreate_db migrate i18n setup lint worker all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -58,5 +58,8 @@ setup:
 
 lint:
 	poetry run flake8 *.py flashboard tests
+
+worker:
+	celery -A manage.celery worker -l info
 
 all: clean install test run
