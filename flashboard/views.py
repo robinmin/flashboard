@@ -1,4 +1,5 @@
 from sqlalchemy.exc import SQLAlchemyError
+
 from flask import Blueprint, render_template, current_app, request, redirect, url_for, flash
 from flask_login import current_user, login_required, login_url
 from flask_babel import gettext as _
