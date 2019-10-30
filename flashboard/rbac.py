@@ -3,7 +3,7 @@ import functools
 from flask import abort, current_app
 from flask_login import current_user
 
-from config.config import Settings
+from config.settings import Settings
 from .utils import flatten
 from .services import UserService
 ###############################################################################

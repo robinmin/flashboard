@@ -6,7 +6,7 @@ from flask_login import login_user, logout_user
 from flask_babel import lazy_gettext as _
 from flask_restplus.errors import abort as api_abort
 
-from config.config import Settings
+from config.settings import Settings
 from .base import BaseModel
 from .database import db_trasaction, save_item
 from .models import UserModel, RoleModel, RolesUsers, TokenModel
