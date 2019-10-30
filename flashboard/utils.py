@@ -9,6 +9,7 @@ from flask import current_app, request
 from flask_babel import gettext as _
 
 PYTHON2 = sys.version_info < (3, 0)
+###############################################################################
 
 
 def is_strong(password, min_len=6):
