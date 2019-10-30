@@ -1,3 +1,5 @@
+from datetime import timedelta  # noqa F401
+
 
 class Settings(object):
     """ class settings should contain all informations of application that will
@@ -54,4 +56,11 @@ class Settings(object):
     RBAC_CONTROL = {
         'sys': ALL_VALID_ROLES,
         'home': ALL_ROLES,
+    }
+
+    CELERYBEAT_SCHEDULE = {
+        # 'run-every-1-minute': {
+        #     'task': 'worker.print_hello',
+        #     'schedule': timedelta(seconds=60)
+        # },
     }
