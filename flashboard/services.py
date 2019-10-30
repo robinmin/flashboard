@@ -6,11 +6,13 @@ from flask_login import login_user, logout_user
 from flask_babel import lazy_gettext as _
 from flask_restplus.errors import abort as api_abort
 
-from config.rbac import DEFAULT_ROLE
-from .database import db_trasaction, save_item, BaseModel
+from config.config import Settings
+from .base import BaseModel
+from .database import db_trasaction, save_item
 from .models import UserModel, RoleModel, RolesUsers, TokenModel
 from .utils import is_strong, prepare_for_hash, generate_random_salt
 from .utils import encode_jwt_token, decode_jwt_token, extract_authorization_from_header
+###############################################################################
 
 
 class BaseService(object):
@@ -152,7 +154,7 @@ class UserService(BaseService):
 
                         # grant default role
                         txn.try_assert(
-                            not self.grant_role(user, DEFAULT_ROLE),
+                            not self.grant_role(user, Settings().DEFAULT_ROLE),
                             _('Failed to grant default role')
                         )
                 except Exception as exp:
