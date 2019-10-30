@@ -4,17 +4,9 @@ from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _
 
-from .utils import strip_space, strip_space_lower, flatten
+from .utils import strip_space, strip_space_lower
+from .base import FormMixin
 ###############################################################################
-
-
-class FormMixin(object):
-    def skip_csrf_validation(self):
-        if hasattr(self, '_fields') and 'csrf_token' in self._fields:
-            del self._fields['csrf_token']
-
-    def extract_errors(self, sep='; '):
-        return sep.join(flatten(self.errors.values())) if self.errors and len(self.errors) > 0 else ''
 
 
 class LoginForm(FlaskForm, FormMixin):
