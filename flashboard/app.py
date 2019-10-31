@@ -78,6 +78,11 @@ def create_app(extra_config_settings={}):
     if extra_config_settings is not None and len(extra_config_settings) > 0:
         app.config.update(extra_config_settings)
 
+    # enable colorful logging in development mode
+    if app.config.get('ENV', None) == 'development':
+        import coloredlogs
+        coloredlogs.install()
+
     init_app(app)
 
     # enable sentry

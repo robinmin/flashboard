@@ -36,6 +36,7 @@ flask-debugtoolbar = "^0.10.1"
 pylint = "^2.4"
 flake8 = "^3.7"
 flower = "^0.9.3"
+coloredlogs = "^10.0"
 
 [tool.dephell.main]
 from = {format = "poetry", path = "pyproject.toml"}
