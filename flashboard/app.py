@@ -208,18 +208,23 @@ def user_loader(user_id):
         # get default language
         settings = Settings()
         lang = settings.get('BABEL_DEFAULT_LOCALE', None)
+        timezone = settings.get('BABEL_DEFAULT_TIMEZONE', None)
 
         # user prefference support
         user = UserService().load_user(user_id)
         if hasattr(user, 'language'):
             lang = user.language
+        if hasattr(user, 'timezone'):
+            timezone = user.timezone
 
         # cache user language prefference into global variable
         if hasattr(g, 'user_info'):
             g.user_info['locale'] = lang
+            g.user_info['timezone'] = timezone
         else:
             g.user_info = {
-                'locale': lang
+                'locale': lang,
+                'timezone': timezone
             }
 
         # cache config information
@@ -388,10 +393,18 @@ def get_locale():
         # final default language
     return sys_default_lang
 
-# @babel.timezoneselector
-# def get_timezone():
-#     user = getattr(g, 'user', None)
-#     if user is not None:
-#         return user.timezone
+
+@babel.timezoneselector
+def get_timezone():
+    # if a user is logged in, use the locale from the user settings
+    user_info = getattr(g, 'user_info', None)
+    if user_info is not None and 'timezone' in user_info:
+        return user_info['timezone']
+
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits. The best match wins.
+    if hasattr(g, 'settings'):
+        return g.settings.get('BABEL_DEFAULT_TIMEZONE', None)
+    return None
 
 ###############################################################################
