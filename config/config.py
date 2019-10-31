@@ -61,7 +61,7 @@ class Config(Settings):
     USER_EMAIL_SENDER_NAME = 'Your name'
     USER_EMAIL_SENDER_EMAIL = 'yourname@gmail.com'
 
-    ADMINS = [
+    ADMINS_EMAIL = [
         '"Admin One" <admin1@gmail.com>',
     ]
 

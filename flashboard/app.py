@@ -143,7 +143,7 @@ def init_email_error_handler(app):
     secure = () if app.config.get('MAIL_USE_TLS') else None
 
     # Retrieve app settings from app.config
-    to_addr_list = app.config.get('ADMINS', None)
+    to_addr_list = app.config.get('ADMINS_EMAIL', None)
     subject = app.config.get(
         'APP_SYSTEM_ERROR_SUBJECT_LINE', _('System Error'))
 
