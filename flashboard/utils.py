@@ -109,7 +109,7 @@ def encode_jwt_token(user_id, duration, random_seed=0):
             'iat': now,
             'rds': random_seed
         },
-        current_app.config['SECRET_KEY'],
+        current_app.config.get('SECRET_KEY', ''),
         algorithm='HS512'
     ).decode('utf-8')
 
@@ -123,7 +123,7 @@ def decode_jwt_token(token):
     try:
         payload = jwt.decode(
             token,
-            current_app.config['SECRET_KEY'],
+            current_app.config.get('SECRET_KEY', ''),
             algorithm='HS512'
         )
     except jwt.ExpiredSignatureError as exp:
