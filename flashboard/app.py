@@ -81,28 +81,25 @@ def create_app(extra_config_settings={}):
     init_app(app)
 
     # enable sentry
-    if app.config['ENABLE_SENTRY']:
+    if app.config.get('ENABLE_SENTRY', False):
         enable_sentry(app)
 
     # enable admin
-    if app.config['ENABLE_ADMIN']:
+    if app.config.get('ENABLE_ADMIN', False):
         enable_admin(app)
 
     # enable debug tool bar
-    if app.config['ENABLE_DEBUG_TOOLBAR']:
+    if app.config.get('ENABLE_DEBUG_TOOLBAR', False):
         from flask_debugtoolbar import DebugToolbarExtension
-
-        # disable intercept redirect
-        app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
         DebugToolbarExtension(app)
 
     # enable celery
-    if app.config['ENABLE_CELERY']:
+    if app.config.get('ENABLE_CELERY', False):
         enable_celery(app)
 
     # register all relevant blueprints
     with app.app_context():
-        if app.config['ENABLE_BUILDIN_API']:
+        if app.config.get('ENABLE_BUILDIN_API', False):
             from .apis import auth_ns, api, bp as bp_api
 
             # avoid to check CSRF on APIs
@@ -112,7 +109,7 @@ def create_app(extra_config_settings={}):
             api.add_namespace(auth_ns, path='/user')
 
             app.register_blueprint(bp_api, url_prefix='/api')
-        if app.config['ENABLE_BUILDIN_VIEW']:
+        if app.config.get('ENABLE_BUILDIN_VIEW', False):
             from .views import bp as bp_sys
 
             app.register_blueprint(bp_sys, url_prefix='/sys')
@@ -138,15 +135,15 @@ def init_email_error_handler(app):
         return  # Do not send error emails while developing
 
     # Retrieve email settings from app.config
-    host = app.config['MAIL_SERVER']
-    port = app.config['MAIL_PORT']
-    from_addr = app.config['MAIL_DEFAULT_SENDER']
-    username = app.config['MAIL_USERNAME']
-    password = app.config['MAIL_PASSWORD']
+    host = app.config.get('MAIL_SERVER', 'localhost')
+    port = app.config.get('MAIL_PORT', None)
+    from_addr = app.config.get('MAIL_DEFAULT_SENDER', None)
+    username = app.config.get('MAIL_USERNAME', None)
+    password = app.config.get('MAIL_PASSWORD', None)
     secure = () if app.config.get('MAIL_USE_TLS') else None
 
     # Retrieve app settings from app.config
-    to_addr_list = app.config['ADMINS']
+    to_addr_list = app.config.get('ADMINS', None)
     subject = app.config.get(
         'APP_SYSTEM_ERROR_SUBJECT_LINE', _('System Error'))
 
@@ -186,7 +183,7 @@ def init_app(app):
     # Setup Flask-Login
     login_manager.init_app(app)
     login_manager.session_protection = 'strong'
-    login_manager.login_view = app.config['APP_URL_WELCOME']
+    login_manager.login_view = app.config.get('APP_URL_WELCOME', '')
     login_manager.login_message = _('Unauthorized User')
     login_manager.login_message_category = 'info'
 
@@ -265,7 +262,7 @@ def send_email(app, to, subject, template):
         subject,
         recipients=[to],
         html=template,
-        sender=app.config['MAIL_DEFAULT_SENDER']
+        sender=app.config.get('MAIL_DEFAULT_SENDER', None)
     )
     return mail.send(msg)
 
@@ -283,7 +280,7 @@ def enable_sentry(app):
 
     # integrate with sentry SDK
     sentry_sdk.init(
-        dsn=app.config['SENTRY_DSN'],
+        dsn=app.config.get('SENTRY_DSN', ''),
         integrations=[FlaskIntegration(), SqlalchemyIntegration()]
     )
 
@@ -309,8 +306,8 @@ def enable_celery(app=None):
 
     celery = Celery(
         app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
+        backend=app.config.get('CELERY_RESULT_BACKEND', ''),
+        broker=app.config.get('CELERY_BROKER_URL', '')
     )
 
     celery.conf.update(app.config)
@@ -340,7 +337,7 @@ def enable_admin(app):
     from flashboard import models
 
     # get wecome URL
-    url_welcome = app.config['APP_URL_WELCOME']
+    url_welcome = app.config.get('APP_URL_WELCOME', None)
 
     # define customized class
     class MyModelView(ModelView):
@@ -352,8 +349,6 @@ def enable_admin(app):
             # redirect to login page if user doesn't have access
             return redirect(url_for(url_welcome, next=request.url))
 
-    # set optional bootswatch theme
-    app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
     admin = Admin(app, name='Admin', template_mode='bootstrap3')
 
     # Add administrative views here
