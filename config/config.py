@@ -79,7 +79,12 @@ class Config(Settings):
     #  Enable features -- misc
     # --------------------------------------------------------------------------
     ENABLE_ADMIN = True
+    # set optional bootswatch theme
+    FLASK_ADMIN_SWATCH = 'cerulean'
+
     ENABLE_DEBUG_TOOLBAR = True
+    # disable intercept redirect
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
     ENABLE_BUILDIN_API = True
     ENABLE_BUILDIN_VIEW = True
 
