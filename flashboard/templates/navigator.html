@@ -1,0 +1,60 @@
+{% block pre_content %}
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <!-- logo here -->
+    <a class="navbar-item" href="#">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" width="112" height="28" />
+    </a>
+
+    <!--a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" style="background-color: red;">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a-->
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="#">
+        <span class="icon"><i class="fas fa-home"></i></span>
+        {{ _('Home') }}
+      </a>
+      {% if url_admin %}<a class="navbar-item" href="{{ url_admin }}">
+        <span class="icon"><i class="fas fa-tasks"></i></span>
+        {{ _('Admin') }}
+      </a>{% endif %}
+
+      <!--a class="navbar-item">Documentation</a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">More</a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item">About</a>
+          <a class="navbar-item">Jobs</a>
+          <a class="navbar-item">Contact</a>
+
+          <hr class="navbar-divider">
+          <a class="navbar-item">Report an issue</a>
+        </div>
+      </div-->
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <!--a class="button is-primary"><strong>Sign up</strong></a>
+          <a class="button is-light">Log in</a-->
+          <a class="button is-text">
+            <i class="fa fa-user"></i>{{ current_user.name}}
+          </a>
+          <a class="button is-light" href="{{ url_logout }}">
+            <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+            {{ _('Logout') }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+{% endblock %}
