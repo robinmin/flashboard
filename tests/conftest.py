@@ -26,7 +26,10 @@ def app():
             'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
 
             # Disable CSRF tokens in the Forms (only valid for testing purposes!)
-            'WTF_CSRF_ENABLED': False
+            'WTF_CSRF_ENABLED': False,
+
+            # force locale into 'en'
+            'BABEL_DEFAULT_LOCALE': 'en'
         })
 
         # create the database and load test data

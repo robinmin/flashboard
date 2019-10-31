@@ -37,6 +37,7 @@ babel = Babel()
 # global instance
 log = None
 celery = None
+sys_default_lang = None
 
 ###############################################################################
 
@@ -64,7 +65,7 @@ def create_app(extra_config_settings={}):
     log_config = load_json_config(os.path.join(basedir, 'config/logging.json'))
     logging.config.dictConfig(log_config)
 
-    global log
+    global log, sys_default_lang
     log = logging.getLogger(__name__)
 
     # Instantiate Flask
@@ -78,6 +79,8 @@ def create_app(extra_config_settings={}):
     # Load extra settings from extra_config_settings param
     if extra_config_settings is not None and len(extra_config_settings) > 0:
         app.config.update(extra_config_settings)
+
+    sys_default_lang = app.config.get('BABEL_DEFAULT_LOCALE', None)
 
     # enable colorful logging in development mode
     if app.config.get('ENV', None) == 'development':
@@ -372,8 +375,6 @@ def get_locale():
     user_info = getattr(g, 'user_info', None)
     if user_info is not None and 'locale' in user_info:
         return user_info['locale']
-
-    sys_default_lang = Settings().BABEL_DEFAULT_LOCALE
 
     # otherwise try to guess the language from the user accept
     # header the browser transmits. The best match wins.
