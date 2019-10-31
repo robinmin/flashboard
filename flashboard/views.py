@@ -143,9 +143,9 @@ def logout():
 def home():
     if current_user.is_authenticated:
         url_admin = ''
-        if current_app.config['ENV'] == 'development':
+        if current_app.config.get('ENV', None) == 'development':
             url_admin = url_for(
-                all_urls['admin']) if current_app.config['ENABLE_ADMIN'] else ''
+                all_urls['admin']) if current_app.config.get('ENABLE_ADMIN', False) else ''
 
         return render_template(
             'home.html',
