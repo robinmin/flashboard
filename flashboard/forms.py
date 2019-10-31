@@ -25,7 +25,7 @@ class LoginForm(FlaskForm, FormMixin):
         InputRequired(_('Password is required')),
         Length(6, 12),
     ], filters=[strip_space])
-    remember_me = BooleanField(_('Remember me'), default=False)
+    remember_me = BooleanField(_('Remember me'), default=True)
     submit = SubmitField(_('Login'))
 
 
