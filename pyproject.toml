@@ -24,6 +24,8 @@ celery = "^4.3"
 psycopg2 = "^2.8"
 flask-babel = "^0.12.2"
 redis = "^3.3"
+kombu = "=4.6.3"
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
@@ -33,6 +35,7 @@ flask-sqlacodegen = "^1.1"
 flask-debugtoolbar = "^0.10.1"
 pylint = "^2.4"
 flake8 = "^3.7"
+flower = "^0.9.3"
 
 [tool.dephell.main]
 from = {format = "poetry", path = "pyproject.toml"}

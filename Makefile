@@ -1,4 +1,4 @@
-.PHONY: clean list install test run db model shell recreate_db migrate i18n setup lint worker all
+.PHONY: clean list install test run db model shell recreate_db migrate i18n setup lint worker flower all
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -61,5 +61,8 @@ lint:
 
 worker:
 	celery -A manage.celery worker -l info
+
+flower:
+	celery flower -A manage.celery --inspect_timeout=30000 --address=127.0.0.1 --port=5555 -l info
 
 all: clean install test run
