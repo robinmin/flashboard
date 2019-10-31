@@ -133,7 +133,7 @@ def get_engine(app, db_uri=None):
         global engine
         if engine is None:
             engine = create_engine(
-                app.config['SQLALCHEMY_DATABASE_URI']
+                app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
             )
         return engine
 
