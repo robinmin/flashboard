@@ -16,7 +16,7 @@ manager = Manager(app)
 
 app.app_context().push()
 
-if app.config['ENV'] == 'development':
+if app.config.get('ENV', None) == 'development':
     db = SQLAlchemy(app)
     migrate = Migrate(app, db)
 
