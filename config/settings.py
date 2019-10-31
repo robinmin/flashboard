@@ -1,7 +1,7 @@
 from datetime import timedelta  # noqa F401
 
 
-class Settings(object):
+class Settings(dict):
     """ class settings should contain all informations of application that will
      never be changed after the development no mater in which mode. That means
      will can import this class directly if necessary:
