@@ -68,7 +68,8 @@ class UserService(BaseService):
         user = self.load_raw_user(user_info)
         if user:
             from flask import current_app
-            public_salt = current_app.config['SECURITY_PASSWORD_SALT']
+            public_salt = current_app.config.get(
+                'SECURITY_PASSWORD_SALT', None)
             if not user.verify_password(prepare_for_hash(
                 password, public_salt, user.private_salt
             )):
@@ -119,7 +120,8 @@ class UserService(BaseService):
                 msg = _('User name or email is already exist')
             else:
                 from flask import current_app
-                public_salt = current_app.config['SECURITY_PASSWORD_SALT']
+                public_salt = current_app.config.get(
+                    'SECURITY_PASSWORD_SALT', None)
 
                 # insert into database
                 user = self.klass(name=name, email=email)
