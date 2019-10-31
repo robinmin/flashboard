@@ -18,6 +18,7 @@ from flask_babel import Babel, gettext as _
 
 # import application packages
 from config.config import config_factory, all_urls
+from config.settings import Settings
 from .database import init_db, create_session
 from .services import UserService
 
@@ -202,8 +203,8 @@ def user_loader(user_id):
 
     try:
         # get default language
-        from flask import current_app
-        lang = current_app.config.get('BABEL_DEFAULT_LOCALE', None)
+        settings = Settings()
+        lang = settings.get('BABEL_DEFAULT_LOCALE', None)
 
         # user prefference support
         user = UserService().load_user(user_id)
@@ -219,12 +220,8 @@ def user_loader(user_id):
             }
 
         # cache config information
-        if not hasattr(g, 'config'):
-            g.config = {
-                'BABEL_DEFAULT_LOCALE': current_app.config.get('BABEL_DEFAULT_LOCALE', 'en'),
-                'BABEL_DEFAULT_TIMEZONE': current_app.config.get('BABEL_DEFAULT_TIMEZONE', 'UTC'),
-                'BABEL_LANGUAGES': current_app.config.get('BABEL_LANGUAGES', {}),
-            }
+        if not hasattr(g, 'settings'):
+            g.settings = settings
 
         # special case for confirm_email
         if request.path:
@@ -376,17 +373,19 @@ def get_locale():
     if user_info is not None and 'locale' in user_info:
         return user_info['locale']
 
+    sys_default_lang = Settings().BABEL_DEFAULT_LOCALE
+
     # otherwise try to guess the language from the user accept
     # header the browser transmits. The best match wins.
-    if hasattr(g, 'config'):
-        langs = g.config['BABEL_LANGUAGES'] if 'BABEL_LANGUAGES' in g.config else {}
-        default_lang = g.config['BABEL_DEFAULT_LOCALE'] if 'BABEL_DEFAULT_LOCALE' in g.config else 'en'
+    if hasattr(g, 'settings'):
+        langs = g.settings.get('BABEL_LANGUAGES', None)
+        default_lang = g.settings.get('BABEL_DEFAULT_LOCALE', sys_default_lang)
         return request.accept_languages.best_match(
             langs.keys() if len(langs) > 0 else default_lang
         )
 
-    # final default language
-    return 'en'
+        # final default language
+    return sys_default_lang
 
 # @babel.timezoneselector
 # def get_timezone():
