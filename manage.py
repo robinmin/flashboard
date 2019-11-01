@@ -6,6 +6,7 @@ from flask_script import Manager, Shell
 from flashboard.app import create_app, enable_celery
 from flashboard.database import create_all_tables
 from flashboard.utils import get_all_routes
+from knowall.views import init_view
 
 from tests.conftest import add_metadata_for_app
 ###############################################################################
@@ -15,6 +16,7 @@ celery = enable_celery(app)
 manager = Manager(app)
 
 app.app_context().push()
+init_view(app, '/knowall')
 
 if app.config.get('ENV', None) == 'development':
     db = SQLAlchemy(app)
