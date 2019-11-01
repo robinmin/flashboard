@@ -8,6 +8,8 @@ class Config(Settings):
     # Flask settings
     CSRF_ENABLED = True
     DEBUG = False
+    # TEMPLATE_DEBUG = True
+    # EXPLAIN_TEMPLATE_LOADING = True
     TESTING = False
     # DO NOT use Unsecure Secrets in production environments
     # Generate a safe one with:
