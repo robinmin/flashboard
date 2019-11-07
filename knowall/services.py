@@ -1,4 +1,5 @@
 from sqlalchemy import and_
+from sqlalchemy.sql import text
 
 from flashboard.services import BaseService
 
@@ -175,7 +176,7 @@ class ColumnService(BaseService):
                 return False
 
         clause = """
-            insert into :des_table(n_inuse, d_create, c_name, c_label, c_src_tab, c_src_col, c_src_type, n_table_id, n_creator_id)
+            insert into {des_table}(n_inuse, d_create, c_name, c_label, c_src_tab, c_src_col, c_src_type, n_table_id, n_creator_id)
             select
                 1 as n_inuse,
                 now() as d_create,
@@ -188,16 +189,17 @@ class ColumnService(BaseService):
                     when udt_name in('int1', 'int2', 'int4', 'int8') then 'int'
                     else udt_name
                 end as c_src_type,
-                :table_id as n_table_id,
-                :creator_id as n_creator_id
+                {table_id} as n_table_id,
+                {creator_id} as n_creator_id
             from information_schema.columns
-            where table_catalog=:db_name and table_schema='public'
-                and table_name =:src_table
-            order by table_name, ordinal_position;"""
-        return self.execute_read_sql(clause, {
-            'des_table': ColumnModel.__tablename__,
-            'table_id': table_id,
-            'db_name': db_name,
-            'src_table': src_table,
-            'creator_id': creator_id,
-        })
+            where table_catalog='{db_name}' and table_schema='public'
+                and table_name ='{src_table}'
+            order by table_name, ordinal_position;""".format(
+                des_table=ColumnModel.__tablename__,
+                table_id=table_id,
+                db_name=db_name,
+                src_table=src_table,
+                creator_id=creator_id,
+            )
+        rst = self.execute_read_sql(clause)
+        return True if rst else False
