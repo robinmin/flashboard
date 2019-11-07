@@ -108,7 +108,7 @@ class ColumnService(BaseService):
             self.klass.table_id == table_id
         )
 
-    def get_detail(self, table_info, column_id):
+    def get_detail(self, owner_id, table_info, column_info):
         """ get available project list """
 
         if isinstance(table_info, int):
@@ -118,10 +118,16 @@ class ColumnService(BaseService):
             if not table_id:
                 return False
 
+        if isinstance(column_info, int):
+            return self.klass.query.filter(and_(
+                self.klass.table_id == table_id,
+                self.klass.id == column_info,
+            )).first()
+
         return self.klass.query.filter(and_(
-            self.klass.id == column_id,
-            self.klass.table_id == table_id,
-        )).first()
+                self.klass.table_id == table_id,
+                self.klass.name == column_info,
+            )).first()
 
     def create(self, name, description, owner_id, table_info, data={}):
         """ add new table """
