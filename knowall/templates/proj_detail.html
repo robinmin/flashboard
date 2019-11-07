@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% include "navigator.html" %}
+{% import 'macros.html' as macros %}
+
+{% block content %}
+  <section class="section" style="padding: 1.5rem 1.5rem;">
+    <div class="table-container">
+      {{ macros.form_title('', 'Project Details', 'is-horizontal') }}
+      {{ macros.form_input('Name', proj_info.name, 'is-horizontal', 'readonly') }}
+      {{ macros.form_textarea('Description', proj_info.description, 'is-horizontal', 'readonly') }}
+      {{ macros.form_button_back('Go Back', 'is-horizontal') }}
+    </div>
+  </section>
+{% endblock %}

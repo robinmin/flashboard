@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% include "navigator.html" %}
+
+{% block content %}
+  <section class="section" style="padding: 1.5rem 1.5rem;">
+    <div class="table-container">
+      <h2 class="subtitle">
+        <span class="icon is-small is-left"><i class="fa fa-table"></i></span>
+        <a href="{{ url_for('.detail', table_name=table_name) }}">
+          {{table_name}}
+        </a>
+      </h2>
+      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead><tr style="font-weight: bold;">
+          <td>Name</td>
+          <td>Description</td>
+          <td>Label</td>
+          <td>External Name</td>
+          <td>Source Table</td>
+          <td>Source Column</td>
+          <td>Source Type</td>
+          <td>Business Category</td>
+          <td>Logic Type</td>
+          <td>Comments</td>
+          <td>Inuse?</td>
+          <td>Create date</td>
+        </tr></thead>
+        <tbody>
+          {% for col in columns %}<tr>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.name }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.description }}</a></td>
+
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.label }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.external_name }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.src_table }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.src_col }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.src_type }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.biz_category }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.logic_type }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.comments }}</a></td>
+
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.in_use }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name) }}">{{ col.create_on.strftime('%Y-%m-%d %H:%M:%S') if col.create_on else '' }}</a></td>
+          </tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

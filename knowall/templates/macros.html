@@ -1,0 +1,45 @@
+{% macro form_title(label='', title='', class='') -%}
+  <div class="field {{class}}">
+      <div class="field-label">{{label}}</div>
+      <div class="field-body">
+        <div class="field">
+          <div class="control">
+            <h3 class="subtitle" style="font-weight: bold;">{{ title }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+{%- endmacro %}
+
+{% macro form_input(label='', value='', class='', attrs='') -%}
+  <div class="field {{class}}">
+    <div class="field-label is-normal"><label class="label">{{label}}</label></div>
+    <div class="field-body">
+      <div class="field"><div class="control">
+        <input class="input" type="text" value="{{ value }}" {{attrs}}>
+      </div></div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro form_textarea(label='', value='', class='', attrs='') -%}
+  <div class="field {{class}}">
+    <div class="field-label is-normal"><label class="label">{{label}}</label></div>
+    <div class="field-body">
+      <div class="field"><div class="control">
+        <textarea class="textarea" {{attrs}}>{{ value }}</textarea>
+      </div></div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro form_button_back(value='', class='') -%}
+  <div class="field {{class}}">
+    <div class="field-label is-normal"></div>
+    <div class="field-body">
+      <div class="field"><div class="control">
+        <button class="button is-link" onclick="window.history.go(-1); return false;">{{value}}</button>
+      </div></div>
+    </div>
+  </div>
+{%- endmacro %}

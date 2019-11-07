@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% include "navigator.html" %}
+
+{% block content %}
+  <section class="section" style="padding: 1.5rem 1.5rem;">
+    <div class="table-container">
+      <h2 class="subtitle">
+        <span class="icon is-small is-left"><i class="fa fa-list"></i></span>
+        Available Table List
+      </h2>
+      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead><tr style="font-weight: bold;">
+          <td>Table</td>
+          <td>Description</td>
+          <td>Owner</td>
+          <td>Project</td>
+          <td>Inuse?</td>
+          <td>Create date</td>
+        </tr></thead>
+        <tbody>
+          {% for tab in tables %}<tr>
+            <td><a href="{{ url_for('.detail', table_name=tab.name)}}">{{ tab.name }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name)}}">{{ tab.description }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name)}}">
+              {% if tab.owner %} {{ tab.owner.name }}{% endif %}
+            </a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name)}}">
+              {% if tab.project %} {{ tab.project.name }}{% endif %}
+            </a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name)}}">{{ tab.in_use }}</a></td>
+            <td><a href="{{ url_for('.column_list', table_name=tab.name)}}">{{ tab.create_on.strftime('%Y-%m-%d %H:%M:%S') if tab.create_on else '' }}</a></td>
+          </tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

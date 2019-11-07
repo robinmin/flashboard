@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% include "navigator.html" %}
+
+{% block content %}
+  <section class="section" style="padding: 1.5rem 1.5rem;">
+    <div class="table-container">
+      <h2 class="subtitle"> Available Project List</h2>
+      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead><tr style="font-weight: bold;">
+          <td>Name</td>
+          <td>Description</td>
+        </tr></thead>
+        <tbody>
+          {% for proj in projects %}<tr>
+            <td><a href="{{ url_for('.detail', proj_id=proj.id)}}">{{ proj.name }}</a></td>
+            <td><a href="{{ url_for('.detail', proj_id=proj.id)}}">{{ proj.description }}</a></td>
+          </tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}
