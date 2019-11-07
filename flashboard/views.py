@@ -7,7 +7,7 @@ from flask_babel import gettext as _
 from config.config import all_urls
 from .forms import LoginForm, SignupForm
 from .services import UserService
-from .app import login_manager, send_email, allow_inactive_login
+from .app import login_manager, send_email, allow_inactive_login, get_menu_list
 from .rbac import rbac_module
 
 bp = Blueprint('flashboard', __name__, template_folder='templates')
@@ -142,16 +142,11 @@ def logout():
 @rbac_module('home')
 def home():
     if current_user.is_authenticated:
-        url_admin = ''
-        if current_app.config.get('ENV', None) == 'development':
-            url_admin = url_for(
-                all_urls['admin']) if current_app.config.get('ENABLE_ADMIN', False) else ''
-
         return render_template(
             'home.html',
             title=_('Home'),
             url_logout=url_for(all_urls['logout']),
-            url_admin=url_admin
+            menu_list=get_menu_list()
         )
     return redirect(url_for(all_urls['login']))
 
