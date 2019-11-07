@@ -28,54 +28,56 @@ def test_create_project(app):
     assert not result and count_before == count_after, 'Failed to add duplicated project'
 
 
-# def test_create_table(app):
-#     psvc = ProjectService()
-#     tsvc = TableService()
+def test_create_table(app):
+    psvc = ProjectService()
+    tsvc = TableService()
 
-#     # add new table normally (new project)
-#     proj_count_before = psvc.count()
-#     tab_count_before = tsvc.count()
-#     result = tsvc.create(
-#         'test-table2',
-#         'This is a demo description on the test-table2',
-#         1,
-#         'test-project'
-#     )
-#     proj_count_after = psvc.count()
-#     tab_count_after = tsvc.count()
-#     assert result \
-#         and proj_count_before + 1 == proj_count_after\
-#         and tab_count_before + 1 == tab_count_after, 'Failed to add new table normally (new project)'
+    # add new table normally (new project)
+    proj_count_before = psvc.count()
+    tab_count_before = tsvc.count()
+    project_info = 'test-project2'
 
-#     # add duplicated table
-#     proj_count_before2 = psvc.count()
-#     tab_count_before2 = tsvc.count()
-#     result = tsvc.create(
-#         'test-table2',
-#         'This is a demo description on the test-table2',
-#         1,
-#         'test-project'
-#     )
-#     proj_count_after2 = psvc.count()
-#     tab_count_after2 = tsvc.count()
-#     assert not result \
-#         and proj_count_before2 == proj_count_after2\
-#         and tab_count_before2 == tab_count_after2, 'Failed to add duplicated table'
+    result = tsvc.create(
+        'test-table2',
+        'This is a demo description on the test-table2',
+        1,
+        project_info
+    )
+    proj_count_after = psvc.count()
+    tab_count_after = tsvc.count()
+    assert result \
+        and proj_count_before + 1 == proj_count_after\
+        and tab_count_before + 1 == tab_count_after, 'Failed to add new table normally (new project)'
 
-#     # add new table normally (existing project)
-#     proj_count_before3 = psvc.count()
-#     tab_count_before3 = tsvc.count()
-#     result = tsvc.create(
-#         '2nd-table',
-#         'This is a demo description on the 2nd-table',
-#         1,
-#         'test-project'
-#     )
-#     proj_count_after3 = psvc.count()
-#     tab_count_after3 = tsvc.count()
-#     assert result \
-#         and proj_count_before3 == proj_count_after3\
-#         and tab_count_before3 + 1 == tab_count_after3, 'Failed to add new table normally (existing project)'
+    # add duplicated table
+    proj_count_before2 = psvc.count()
+    tab_count_before2 = tsvc.count()
+    result = tsvc.create(
+        'test-table2',
+        'This is a demo description on the test-table2',
+        1,
+        project_info
+    )
+    proj_count_after2 = psvc.count()
+    tab_count_after2 = tsvc.count()
+    assert not result \
+        and proj_count_before2 == proj_count_after2\
+        and tab_count_before2 == tab_count_after2, 'Failed to add duplicated table'
+
+    # add new table normally (existing project)
+    proj_count_before3 = psvc.count()
+    tab_count_before3 = tsvc.count()
+    result = tsvc.create(
+        '2nd-table',
+        'This is a demo description on the 2nd-table',
+        1,
+        project_info
+    )
+    proj_count_after3 = psvc.count()
+    tab_count_after3 = tsvc.count()
+    assert result \
+        and proj_count_before3 == proj_count_after3\
+        and tab_count_before3 + 1 == tab_count_after3, 'Failed to add new table normally (existing project)'
 
 
 def test_create_column(app):
