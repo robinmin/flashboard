@@ -5,15 +5,15 @@
 {% block content %}
   <section class="section" style="padding: 1.5rem 1.5rem;">
     <div class="table-container">
-      {{ macros.form_title('', 'Table Details', 'is-horizontal') }}
-      {{ macros.form_input('Table', table_info.name, 'is-horizontal', 'readonly') }}
-      {{ macros.form_input('Owner', table_info.owner.name if table_info.owner else '', 'is-horizontal', 'readonly') }}
-      {{ macros.form_input('Project', table_info.project.name if table_info.project else '', 'is-horizontal', 'readonly') }}
-      {{ macros.form_input('Inuse?', table_info.in_use, 'is-horizontal', 'readonly') }}
-      {{ macros.form_input('Create date', table_info.create_on.strftime('%Y-%m-%d %H:%M:%S'), 'is-horizontal', 'readonly') }}
-      {{ macros.form_input('Last update date', table_info.update_on.strftime('%Y-%m-%d %H:%M:%S') if table_info.update_on else '', 'is-horizontal', 'readonly') }}
-      {{ macros.form_textarea('Description', table_info.description, 'is-horizontal', 'readonly') }}
-      {{ macros.form_button_back('Go Back', 'is-horizontal') }}
+      {{ macros.form_title('', _('Table Details'), 'is-horizontal') }}
+      {{ macros.form_input(_('Table'), table_info.name, 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Owner'), table_info.owner.name if table_info.owner else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Project'), table_info.project.name if table_info.project else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Inuse?'), table_info.in_use, 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Create date'), table_info.create_on.strftime('%Y-%m-%d %H:%M:%S'), 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Last update date'), table_info.update_on.strftime('%Y-%m-%d %H:%M:%S') if table_info.update_on else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_textarea(_('Description'), table_info.description, 'is-horizontal', 'readonly') }}
+      {{ macros.form_button_back(_('Go Back'), 'is-horizontal') }}
     </div>
   </section>
 {% endblock %}

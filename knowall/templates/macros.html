@@ -22,6 +22,12 @@
   </div>
 {%- endmacro %}
 
+{% macro list_checkbox(label='', value='', class='', attrs='') -%}
+  <label class="checkbox {{class}}" {{attrs}}>
+    <input type="checkbox" value='{{value}}' {% if value %}checked='checked'{% endif %} {{attrs}}>{{label}}
+  </label>
+{%- endmacro %}
+
 {% macro form_textarea(label='', value='', class='', attrs='') -%}
   <div class="field {{class}}">
     <div class="field-label is-normal"><label class="label">{{label}}</label></div>

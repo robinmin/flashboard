@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% include "navigator.html" %}
+{% import 'macros.html' as macros %}
 
 {% block content %}
   <section class="section" style="padding: 1.5rem 1.5rem;">
@@ -12,35 +13,35 @@
       </h2>
       <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
         <thead><tr style="font-weight: bold;">
-          <td>Name</td>
-          <td>Description</td>
-          <td>Label</td>
-          <td>External Name</td>
-          <td>Source Table</td>
-          <td>Source Column</td>
-          <td>Source Type</td>
-          <td>Business Category</td>
-          <td>Logic Type</td>
-          <td>Comments</td>
-          <td>Inuse?</td>
-          <td>Create date</td>
+          <td>{{ _('Name') }}</td>
+          <td>{{ _('Label') }}</td>
+          <td>{{ _('Internal Name') }}</td>
+          <td>{{ _('External Name') }}</td>
+          <td>{{ _('Source Table') }}</td>
+          <td>{{ _('Source Column') }}</td>
+          <td>{{ _('Source Type') }}</td>
+          <td>{{ _('Business Category') }}</td>
+          <td>{{ _('Logic Type') }}</td>
+          <td>{{ _('Description') }}</td>
+          <td>{{ _('Comments') }}</td>
+          <td>{{ _('Inuse?') }}</td>
+          <td>{{ _('Create date') }}</td>
         </tr></thead>
         <tbody>
           {% for col in columns %}<tr>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.name if col.name else ''}}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.description if col.description else '' }}</a></td>
-
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.label if col.label else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.external_name if col.external_name else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.src_table if col.src_table else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.src_col if col.src_col else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.src_type if col.src_type else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.biz_category if col.biz_category else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.logic_type if col.logic_type else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.comments if col.comments else '' }}</a></td>
-
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.in_use if col.in_use else '' }}</a></td>
-            <td><a href="{{ url_for('.column_list', table_name=table_name) }}">{{ col.create_on.strftime('%Y-%m-%d %H:%M:%S') if col.create_on else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.name if col.name else ''}}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.label if col.label else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.internal_name if col.internal_name else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.external_name if col.external_name else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.src_table if col.src_table else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.src_col if col.src_col else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.src_type if col.src_type else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.biz_category if col.biz_category else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.logic_type if col.logic_type else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.description if col.description else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.comments if col.comments else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ macros.list_checkbox('', col.in_use, '', 'disabled') }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.create_on.strftime('%Y-%m-%d %H:%M:%S') if col.create_on else '' }}</a></td>
           </tr>{% endfor %}
         </tbody>
       </table>

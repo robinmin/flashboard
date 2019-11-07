@@ -4,11 +4,11 @@
 {% block content %}
   <section class="section" style="padding: 1.5rem 1.5rem;">
     <div class="table-container">
-      <h2 class="subtitle"> Available Project List</h2>
+      <h2 class="subtitle">{{ _('Available Project List') }}</h2>
       <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
         <thead><tr style="font-weight: bold;">
-          <td>Name</td>
-          <td>Description</td>
+          <td>{{ _('Name') }}</td>
+          <td>{{ _('Description') }}</td>
         </tr></thead>
         <tbody>
           {% for proj in projects %}<tr>
