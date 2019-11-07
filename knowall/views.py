@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash, redirect, url_for
 from flask.views import MethodView
 from flask_login import current_user, login_required
+
+from flask_babel import gettext as _
 
 from flashboard.app import get_menu_list
 from .services import ProjectService, TableService, ColumnService
@@ -70,8 +72,14 @@ def init_view(app, url_prefix):
     class ColumnListView(MethodView):
         decorators = [login_required]
 
-        def get(self, table_name):
-            columns = ColumnService().get_list(table_name)
+        def get(self, table_name=''):
+            columns = False
+            if table_name:
+                columns = ColumnService().get_list(table_name)
+            if not columns:
+                flash(_('Failed to load column list for ') + table_name, 'error')
+                return redirect(url_for('.index'))
+
             return render_template(
                 'column_list.html',
                 menu_list=get_menu_list(),
