@@ -39,6 +39,8 @@ log = None
 celery = None
 sys_default_lang = None
 
+# application menu list
+app_menu_list = []
 ###############################################################################
 
 
@@ -132,7 +134,33 @@ def create_app(extra_config_settings={}):
         # Initialize Global db and create all tables
         init_db(app)
 
+        # add default menu item
+        add_menu_items([{
+            'name': _('Home'),
+            'url': 'flashboard.home',
+            'icon': 'fa-home',
+        }, {
+            'name': _('Admin'),
+            'url': 'admin.index' if app.config.get('ENABLE_ADMIN', False) and app.config.get('ENV', None) == 'development' else '',
+            'icon': 'fa-tasks',
+        }])
+
         return app
+
+
+def add_menu_items(conf):
+    if conf is None:
+        return
+
+    global app_menu_list
+    if isinstance(conf, (list, tuple)):
+        app_menu_list = app_menu_list + conf
+    else:
+        app_menu_list.append(conf)
+
+
+def get_menu_list():
+    return app_menu_list
 
 
 def init_email_error_handler(app):
