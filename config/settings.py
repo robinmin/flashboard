@@ -18,6 +18,7 @@ class Settings(dict):
     # --------------------------------------------------------------------------
     #  Application settings
     # --------------------------------------------------------------------------
+    APP_TITLE = 'System'
     APP_URL_WELCOME = 'flashboard.login'
     APP_NAME = 'Flask-User starter app'
     APP_SYSTEM_ERROR_SUBJECT_LINE = APP_NAME + " system error"
