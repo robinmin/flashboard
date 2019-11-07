@@ -1,17 +1,29 @@
 #!/usr/bin/env python
+from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, Shell
 
-from flashboard.app import create_app, enable_celery
+from flask_babel import lazy_gettext as _
+
+from flashboard.app import create_app, enable_celery, add_menu_items
 from flashboard.database import create_all_tables
 from flashboard.utils import get_all_routes
+
 from knowall.views import init_view
+from knowall import models  # noqa: F401
 
 from tests.conftest import add_metadata_for_app
 ###############################################################################
 
 app = create_app()
+# add default menu item
+add_menu_items([{
+    'name': _('Knowall'),
+    'url': 'knowall.index',
+    'icon': 'fa-tasks',
+}])
+
 celery = enable_celery(app)
 manager = Manager(app)
 
@@ -41,7 +53,7 @@ if app.config.get('ENV', None) == 'development':
             import flashboard.models  # noqa: F401
 
             # create them
-            create_all_tables(app)
+            create_all_tables(app, drop_all=True)
 
             # add meta data & test data
             add_metadata_for_app(app)
