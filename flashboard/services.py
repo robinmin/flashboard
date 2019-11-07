@@ -35,6 +35,26 @@ class BaseService(object):
         """ save one item into database """
         return save_item(obj)
 
+    def count(self):
+        return self.klass.query.count()
+
+    def id_to_name(self, id):
+        """ get name by id """
+
+        obj = self.klass().query.filter(self.klass.id == id).first()
+        return obj.name if obj else None
+
+    def name_to_id(self, name):
+        """ get id by name """
+
+        obj = self.klass().query.filter(self.klass.name == name).first()
+        return obj.id if obj else None
+
+    def execute_read_sql(self, clause, params=None):
+        """ execute SQL statement to read data from database """
+
+        return self.klass.query.session.execute(clause, params).fetchall()
+
 
 class UserService(BaseService):
     def __init__(self):
