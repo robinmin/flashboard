@@ -6,23 +6,21 @@
       <img src="{{ url_for('static', filename='images/logo.png') }}" width="112" height="28" />
     </a>
 
-    <!--a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" style="background-color: red;">
+    <!--a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasic" style="background-color: red;">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
     </a-->
   </div>
 
-  <div id="navbarBasicExample" class="navbar-menu">
+  <div id="navbarBasic" class="navbar-menu">
     <div class="navbar-start">
-      <a class="navbar-item" href="#">
-        <span class="icon"><i class="fas fa-home"></i></span>
-        {{ _('Home') }}
-      </a>
-      {% if url_admin %}<a class="navbar-item" href="{{ url_admin }}">
-        <span class="icon"><i class="fas fa-tasks"></i></span>
-        {{ _('Admin') }}
-      </a>{% endif %}
+      {% for menu in menu_list %}
+        {% if menu.url %}<a class="navbar-item" href="{{ url_for(menu.url) }}">
+          <span class="icon"><i class="fas {{ menu.icon }}"></i></span>
+          {{ menu.name }}
+        </a>{% endif %}
+      {% endfor %}
 
       <!--a class="navbar-item">Documentation</a>
 
