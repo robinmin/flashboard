@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.sql import func
 from passlib.apps import custom_app_context as pwd_context
 
 from flask_login import UserMixin
@@ -8,21 +9,15 @@ from .base import BaseModel
 ###############################################################################
 
 
-class RolesUsers(BaseModel):
-    __tablename__ = 'roles_users'
-
-    id = Column(Integer(), primary_key=True, autoincrement=True)
-    user_id = Column('user_id', Integer(), ForeignKey('users.id'))
-    role_id = Column('role_id', Integer(), ForeignKey('role.id'))
-
-
 class RoleModel(BaseModel):
-    __tablename__ = 'role'
+    __tablename__ = 'sys_role'
 
     # define columns
-    id = Column(Integer(), primary_key=True, autoincrement=True)
-    name = Column(String(80), unique=True, nullable=False)
-    description = Column(String(255))
+    id = Column('n_role_id', Integer(), primary_key=True,
+                autoincrement=True, comment='Role ID')
+    name = Column('c_name', String(64), unique=True,
+                  nullable=False, index=True, comment='Role Name')
+    description = Column('c_desc', String(255), comment='Description')
 
     # define methods
     def __init__(self, name=None, description=None):
@@ -37,36 +32,49 @@ class RoleModel(BaseModel):
     def __str__(self):
         return self.name
 
-    # # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
+    # # __hash__ is required to avoid the exception TypeError: unhashable type: 'sys_role' when saving a User
     # def __hash__(self):
     #     return hash(self.name)
 
 
 class UserModel(UserMixin, BaseModel):
-    __tablename__ = 'users'
+    __tablename__ = 'sys_user'
 
     # define columns
-    id = Column(Integer(), primary_key=True, autoincrement=True)
-    name = Column(String(64), unique=True, nullable=False, index=True)
-    email = Column(String(128), unique=True, nullable=False, index=True)
-    password = Column(String(256), nullable=False)
-    private_salt = Column(String(256), nullable=False)
+    id = Column('n_user_id', Integer(), primary_key=True,
+                autoincrement=True, comment='User ID')
+    name = Column('c_name', String(64), unique=True,
+                  nullable=False, index=True, comment='Name')
+    email = Column('c_email', String(128), unique=True, nullable=False,
+                   index=True, comment='Email')
+    password = Column('c_password', String(
+        256), nullable=False, comment='Password')
+    private_salt = Column('c_private_salt', String(
+        256), nullable=False, comment='Private salt for password hash')
 
-    actived = Column(Boolean(), default=False)
-    authenticated = Column(Boolean(), default=False)
-    last_login_at = Column(DateTime(), nullable=True)
-    last_login_ip = Column(String(128), nullable=True)
-    current_login_at = Column(DateTime(), nullable=True)
-    current_login_ip = Column(String(128), nullable=True)
-    login_count = Column(Integer(), default=0, nullable=False)
-    signup_at = Column(DateTime(), nullable=True)
-    confirmed_at = Column(DateTime(), nullable=True)
+    actived = Column('b_actived', Boolean(),
+                     default=False, comment='Active flag')
+    authenticated = Column('b_authenticated', Boolean(),
+                           default=False, comment='Authentication flag')
+    last_login_at = Column('d_last_login_at', DateTime(),
+                           comment='Last login timestamp')
+    last_login_ip = Column('c_last_login_ip', String(
+        128), comment='Last login IP')
+    current_login_at = Column('d_current_login_at',
+                              DateTime(), comment='Current login timestamp')
+    current_login_ip = Column('c_current_login_ip', String(
+        128), comment='Current login IP')
+    login_count = Column('n_login_count', Integer(), default=0,
+                         nullable=False, comment='Login count')
+    signup_at = Column('d_signup_at', DateTime(), comment='Sign-up date')
+    confirmed_at = Column('d_confirmed_at', DateTime(),
+                          comment='Comfirm date')
 
     # define relationship
     roles = relationship(
         'RoleModel',
-        secondary='roles_users',
-        backref=backref('users', lazy='dynamic')
+        secondary='sys_map_r2u',
+        backref=backref('sys_user', lazy='dynamic')
     )
 
     # define methods
@@ -109,47 +117,40 @@ class UserModel(UserMixin, BaseModel):
         return pwd_context.verify(password, self.password)
 
 
+class RolesUsers(BaseModel):
+    __tablename__ = 'sys_map_r2u'
+
+    id = Column('n_map_r2u', Integer(), primary_key=True,
+                autoincrement=True, comment='Map ID of rule to user')
+    user_id = Column('n_user_id', Integer(), ForeignKey(
+        'sys_user.n_user_id'), comment='User ID')
+    role_id = Column('n_role_id', Integer(), ForeignKey(
+        'sys_role.n_role_id'), comment='Role ID')
+
+
 class TokenModel(BaseModel):
-    __tablename__ = 'token_mgr'
+    __tablename__ = 'sys_token_mgr'
 
-    id = Column(Integer(), primary_key=True, autoincrement=True)
+    id = Column('n_token_id', Integer(), primary_key=True,
+                autoincrement=True, comment='Token ID')
 
-    create_on = Column(DateTime(), nullable=False)
-    expiry_on = Column(DateTime(), nullable=False)
-    first_access_on = Column(DateTime(), nullable=True)
-    last_access_on = Column(DateTime(), nullable=True)
-    access_count = Column(Integer(), default=0, nullable=False)
+    create_on = Column('d_create', DateTime(),
+                       nullable=False, default=func.now(), comment='Create date')
+    expiry_on = Column('d_expiry', DateTime(),
+                       nullable=False, comment='Expiry date')
+    first_access_on = Column('d_first_access', DateTime(),
+                             nullable=True, comment='First access date')
+    last_access_on = Column('d_last_access', DateTime(),
+                            nullable=True, comment='Last access date')
+    access_count = Column('n_access_count', Integer(), default=0,
+                          nullable=False, comment='Access count')
 
-    category = Column(Integer(), default=0, nullable=False)
-    token = Column(String(256), nullable=False, unique=True)
-    random_seed = Column(Integer(), default=0, nullable=True)
+    category = Column('n_category', Integer(), default=0,
+                      nullable=False, comment='Token category')
+    token = Column('c_token', String(256), nullable=False,
+                   unique=True, comment='Token')
+    random_seed = Column('n_random_seed', Integer(),
+                         default=0, nullable=True, comment='Random seed')
 
-    owner_id = Column('user_id', Integer(), ForeignKey('users.id'))
-
-
-# class DBVarsModel(BaseModel):
-#     __tablename__ = 'DB_VARS'
-#     # - id
-#     # - table_id
-#     # - name
-#     # - display name
-#     # - external name
-#     # - source table
-#     # - source column
-#     # - biz_category
-#     # - data_type
-#     # - logic_type
-#     # - description
-#     # - url_detail
-
-
-# class DBTableModel(BaseModel):
-#     __tablename__ = 'DB_TABLES'
-#     # - id
-
-
-# class DBProjectModel(BaseModel):
-#     __tablename__ = 'DB_PROJECTS'
-#     # - id
-
-###############################################################################
+    owner_id = Column('n_owner_id', Integer(),
+                      ForeignKey('sys_user.n_user_id'), comment='Owner ID')
