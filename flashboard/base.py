@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey  #
 from sqlalchemy.orm import relationship, backref  # noqa: F401
 from sqlalchemy.sql import func
 
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 from .utils import flatten
 
@@ -16,12 +16,29 @@ BaseModel = declarative_base()
 
 
 class ModelMixin():
-    creator_id = Column('N_CREATOR_ID', Integer(), nullable=False)
-    owner_id = Column('N_OWNER_ID', Integer(), nullable=False)
-    in_use = Column('N_INUSE', Integer(), nullable=False, default=1)
-    create_on = Column('D_CREATE', DateTime(),
-                       nullable=False, default=func.now())
-    update_on = Column('D_UPDATE', DateTime(), nullable=False)
+    @declared_attr
+    def __table_args__(self):
+        return {'quote': False, 'extend_existing': True}
+
+    @declared_attr
+    def in_use(self):
+        return Column('n_inuse', Integer(), nullable=False, default=1, comment='Inuse flag')
+
+    @declared_attr
+    def creator_id(self):
+        return Column('n_creator_id', Integer(), ForeignKey('sys_user.n_user_id'), nullable=False, comment='Creator ID')
+
+    @declared_attr
+    def updater_id(self):
+        return Column('n_updater_id', Integer(), ForeignKey('sys_user.n_user_id'), nullable=True, comment='Updater ID')
+
+    @declared_attr
+    def create_on(self):
+        return Column('d_create', DateTime(), nullable=False, default=func.now(), comment='Create date')
+
+    @declared_attr
+    def update_on(self):
+        return Column('d_update', DateTime(), nullable=True, comment='Last update date')
 
 
 class FormMixin(object):
