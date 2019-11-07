@@ -53,7 +53,7 @@ class BaseService(object):
     def execute_read_sql(self, clause, params=None):
         """ execute SQL statement to read data from database """
 
-        return self.klass.query.session.execute(clause, params).fetchall()
+        return self.klass.query.session.execute(clause, params)
 
 
 class UserService(BaseService):
