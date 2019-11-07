@@ -169,15 +169,12 @@ class ColumnService(BaseService):
                 return False
 
         clause = """
-            insert into :des_table
+            insert into :des_table(n_inuse, d_create, c_name, c_label, c_src_tab, c_src_col, c_src_type, n_table_id, n_creator_id)
             select
                 1 as n_inuse,
                 now() as d_create,
-                null as d_update,
                 column_name as c_name,
-                null as c_label,
-                null as c_extrn_name,
-                null as c_intrn_name,
+                column_name as c_label,
                 concat(table_schema,'.',table_name) as c_src_tab,
                 column_name as c_src_col,
                 case
@@ -185,13 +182,8 @@ class ColumnService(BaseService):
                     when udt_name in('int1', 'int2', 'int4', 'int8') then 'int'
                     else udt_name
                 end as c_src_type,
-                null as c_biz_category,
-                null as c_logic_type,
-                null as c_desc,
-                null as c_comments,
                 :table_id as n_table_id,
-                :creator_id as n_creator_id,
-                null as n_updater_id
+                :creator_id as n_creator_id
             from information_schema.columns
             where table_catalog=:db_name and table_schema='public'
                 and table_name =:src_table
