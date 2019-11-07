@@ -8,7 +8,10 @@ from flashboard.app import create_app
 from flashboard.database import create_all_tables, db_trasaction
 from flashboard.rbac import create_all_roles
 from flashboard.services import UserService
-from knowall.services import TableService
+
+from knowall.models import ProjectModel, TableModel, ColumnModel
+from knowall.services import TableService, ColumnService
+###############################################################################
 
 
 @pytest.fixture
@@ -250,11 +253,23 @@ def add_metadata_for_app(app):
                 app.logger.error(error or 'Unknown error in comfirm user.')
 
         # add new table normally (new project)
-        result = tsvc.create(
-            'test-table',
-            'This is a demo description on the test-project',
-            1,
-            'test-project'
-        )
-        if not result:
-            app.logger.error('Failed to add new table normally')
+        for table_name in [ProjectModel.__tablename__, TableModel.__tablename__, ColumnModel.__tablename__]:
+            result = tsvc.create(
+                table_name,
+                'This is a demo description on the test-project',
+                1,
+                'test-project'
+            )
+            if not result:
+                app.logger.error('Failed to add new table normally')
+
+            # add columns normally
+            csvc = ColumnService()
+            result = csvc.import_table_schema(
+                table_name,
+                'flashboard',
+                table_name,
+                1
+            )
+            if not result:
+                app.logger.error('Failed to add columns normally')
