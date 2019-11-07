@@ -8,6 +8,7 @@ from flashboard.app import create_app
 from flashboard.database import create_all_tables, db_trasaction
 from flashboard.rbac import create_all_roles
 from flashboard.services import UserService
+from knowall.services import TableService
 
 
 @pytest.fixture
@@ -233,6 +234,7 @@ def add_metadata_for_app(app):
     # Add meta data for user-role
     create_all_roles(True)
 
+    tsvc = TableService()
     with db_trasaction():
         # add test user
         usvc = UserService()
@@ -246,3 +248,13 @@ def add_metadata_for_app(app):
             result, error = usvc.confirm_user(user, token.token)
             if not result:
                 app.logger.error(error or 'Unknown error in comfirm user.')
+
+        # add new table normally (new project)
+        result = tsvc.create(
+            'test-table',
+            'This is a demo description on the test-project',
+            1,
+            'test-project'
+        )
+        if not result:
+            app.logger.error('Failed to add new table normally')
