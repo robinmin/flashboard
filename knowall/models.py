@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey  # noqa: F401
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, UniqueConstraint  # noqa: F401
 from sqlalchemy.orm import relationship, backref  # noqa: F401
 # from sqlalchemy.sql import func
 
@@ -22,11 +22,13 @@ class ProjectModel(BaseModel, ModelMixin):
 
 class TableModel(BaseModel, ModelMixin):
     __tablename__ = 'ka_tables'
+    __table_args__ = (
+        UniqueConstraint('n_proj_id', 'c_name', name='uk_tables_name'),
+    )
 
     id = Column('n_table_id', Integer(), primary_key=True,
                 autoincrement=True, comment='ID')
-    name = Column('c_name', String(80), unique=True,
-                  nullable=False, comment='Name')
+    name = Column('c_name', String(80), nullable=False, comment='Name')
     description = Column('c_desc', String(
         255), comment='Description')
 
@@ -40,11 +42,13 @@ class TableModel(BaseModel, ModelMixin):
 
 class ColumnModel(BaseModel, ModelMixin):
     __tablename__ = 'ka_columns'
+    __table_args__ = (
+        UniqueConstraint('n_table_id', 'c_name', name='uk_columns_name'),
+    )
 
     id = Column('n_col_id', Integer(), primary_key=True,
                 autoincrement=True, comment='ID')
-    name = Column('c_name', String(80), unique=True,
-                  nullable=False, comment='Name')
+    name = Column('c_name', String(80), nullable=False, comment='Name')
     label = Column('c_label', String(80), nullable=False, comment='Label')
     external_name = Column('c_extrn_name', String(80), comment='External name')
     internal_name = Column('c_intrn_name', String(80), comment='Internal name')
