@@ -13,6 +13,9 @@
       </h2>
       <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
         <thead><tr style="font-weight: bold;">
+          <td><abbr title="{{ _('Inuse?') }}">
+            <span class="icon is-small is-center"><i class="fa fa-check-circle"></i></span>
+          </abbr></td>
           <td>{{ _('Name') }}</td>
           <td>{{ _('Label') }}</td>
           <td>{{ _('Internal Name') }}</td>
@@ -24,11 +27,10 @@
           <td>{{ _('Logic Type') }}</td>
           <td>{{ _('Description') }}</td>
           <td>{{ _('Comments') }}</td>
-          <td>{{ _('Inuse?') }}</td>
-          <td>{{ _('Create date') }}</td>
         </tr></thead>
         <tbody>
           {% for col in columns %}<tr>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ macros.list_checkbox('', col.in_use, '', 'disabled') }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.name if col.name else ''}}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.label if col.label else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.internal_name if col.internal_name else '' }}</a></td>
@@ -40,8 +42,6 @@
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.logic_type if col.logic_type else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.description if col.description else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.comments if col.comments else '' }}</a></td>
-            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ macros.list_checkbox('', col.in_use, '', 'disabled') }}</a></td>
-            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.create_on.strftime('%Y-%m-%d %H:%M:%S') if col.create_on else '' }}</a></td>
           </tr>{% endfor %}
         </tbody>
       </table>

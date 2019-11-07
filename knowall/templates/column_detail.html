@@ -8,6 +8,7 @@
       {{ macros.form_title('', _('Column Details'), 'is-horizontal') }}
 
       {{ macros.form_input(_('Table'), col_info.table.name if col_info and col_info.table else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Name'), col_info.name if col_info.name else '', 'is-horizontal', 'readonly') }}
       {{ macros.form_input(_('Label'), col_info.label if col_info.label else '', 'is-horizontal', 'readonly') }}
       {{ macros.form_input(_('External name'), col_info.external_name if col_info.external_name else '', 'is-horizontal', 'readonly') }}
       {{ macros.form_input(_('Internal name'), col_info.internal_name if col_info.internal_name else '', 'is-horizontal', 'readonly') }}
