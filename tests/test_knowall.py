@@ -1,4 +1,4 @@
-from knowall.models import ColumnModel
+from knowall.models import ColumnModel, ProjectModel
 from knowall.services import ProjectService, TableService, ColumnService
 ###############################################################################
 
@@ -31,6 +31,9 @@ def test_create_project(app):
 def test_create_table(app):
     psvc = ProjectService()
     tsvc = TableService()
+
+    # clean project table
+    ProjectModel.query.delete()
 
     # add new table normally (new project)
     proj_count_before = psvc.count()
@@ -121,16 +124,16 @@ def test_create_column(app):
         and col_count_before2 == col_count_after2, 'Failed to add duplicated column (existing table)'
 
 
-# def test_import_table_schema(app):
-#     csvc = ColumnService()
+def test_import_table_schema(app):
+    csvc = ColumnService()
 
-#     col_count_before = csvc.count()
-#     result = csvc.import_table_schema(
-#         'test-table',
-#         'flashboard',
-#         ColumnModel.__tablename__,
-#         1
-#     )
-#     col_count_after = csvc.count()
-#     assert result \
-#         and col_count_before < col_count_after, 'Failed to add new column normally (existing table)'
+    col_count_before = csvc.count()
+    result = csvc.import_table_schema(
+        'test-table',
+        'flashboard',
+        ColumnModel.__tablename__,
+        1
+    )
+    col_count_after = csvc.count()
+    assert result \
+        and col_count_before < col_count_after, 'Failed to add new column normally (existing table)'
