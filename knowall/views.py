@@ -98,6 +98,24 @@ def init_view(app, url_prefix):
                 columns=columns
             )
 
+    class ColumnDetailView(MethodView):
+        decorators = [login_required]
+
+        def get(self, table_name='', col_name=''):
+            col_info = False
+            if table_name and col_name:
+                col_info = ColumnService().get_detail(current_user.id, table_name, col_name)
+            if not col_info:
+                flash(_('Failed to load table information for ') +
+                      table_name + '.' + col_name, 'error')
+                return redirect(url_for('.index'))
+
+            return render_template(
+                'column_detail.html',
+                menu_list=get_menu_list(),
+                col_info=col_info
+            )
+
     # --------------------------------------------------------------------------
     # add URL rule
     bp.add_url_rule('/', view_func=TableListView.as_view('index'))
@@ -105,6 +123,8 @@ def init_view(app, url_prefix):
                     view_func=TableDetailView.as_view('detail'))
     bp.add_url_rule('/columns/<table_name>',
                     view_func=ColumnListView.as_view('column_list'))
+    bp.add_url_rule('/column/<table_name>/<col_name>',
+                    view_func=ColumnDetailView.as_view('column_detail'))
 
     # register blueprint
     app.register_blueprint(bp, url_prefix=url_prefix)
