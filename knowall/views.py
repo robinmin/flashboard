@@ -38,9 +38,13 @@ def init_view(app, url_prefix):
     class ProjectDetailView(MethodView):
         decorators = [login_required]
 
-        def get(self, proj_id):
-            proj_info = ProjectService().get_detail(current_user.id, proj_id)
-            print(proj_info)
+        def get(self, proj_id=None):
+            proj_info = False
+            if proj_id:
+                proj_info = ProjectService().get_detail(current_user.id, proj_id)
+            if not proj_info:
+                flash(_('Failed to load project details information'), 'error')
+                return redirect(url_for('.index'))
             return render_template(
                 'proj_detail.html',
                 menu_list=get_menu_list(),
@@ -61,8 +65,15 @@ def init_view(app, url_prefix):
     class TableDetailView(MethodView):
         decorators = [login_required]
 
-        def get(self, table_name):
-            table_info = TableService().get_detail(current_user.id, table_name)
+        def get(self, table_name=''):
+            table_info = False
+            if table_name:
+                table_info = TableService().get_detail(current_user.id, table_name)
+            if not table_info:
+                flash(_('Failed to load table information for ') +
+                      table_name, 'error')
+                return redirect(url_for('.index'))
+
             return render_template(
                 'table_detail.html',
                 menu_list=get_menu_list(),
@@ -89,10 +100,6 @@ def init_view(app, url_prefix):
 
     # --------------------------------------------------------------------------
     # add URL rule
-    # bp.add_url_rule('/', view_func=ProjectListView.as_view('index'))
-    # bp.add_url_rule('/detail/<int:proj_id>',
-    #                 view_func=ProjectDetailView.as_view('detail'))
-
     bp.add_url_rule('/', view_func=TableListView.as_view('index'))
     bp.add_url_rule('/tables/<table_name>',
                     view_func=TableDetailView.as_view('detail'))
