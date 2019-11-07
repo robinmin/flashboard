@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% include "navigator.html" %}
+{% import 'macros.html' as macros %}
+
+{% block content %}
+  <section class="section" style="padding: 1.5rem 1.5rem;">
+    <div class="table-container">
+      {{ macros.form_title('', _('Column Details'), 'is-horizontal') }}
+
+      {{ macros.form_input(_('Table'), col_info.table.name if col_info and col_info.table else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Label'), col_info.label if col_info.label else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('External name'), col_info.external_name if col_info.external_name else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Internal name'), col_info.internal_name if col_info.internal_name else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Source table'), col_info.src_table if col_info.src_table else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Source column'), col_info.src_col if col_info.src_col else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Source type'), col_info.src_type if col_info.src_type else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Business category'), col_info.biz_category if col_info.biz_category else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Logic type'), col_info.logic_type if col_info.logic_type else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_textarea(_('Description'), col_info.description if col_info.description else '', 'is-horizontal', 'readonly') }}
+
+      {{ macros.form_input(_('Inuse?'), col_info.in_use if col_info.in_use else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Create date'), col_info.create_on.strftime('%Y-%m-%d %H:%M:%S'), 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Last update date'), col_info.update_on.strftime('%Y-%m-%d %H:%M:%S') if col_info.update_on else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_textarea(_('Comments'), col_info.comments if col_info.comments else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_button_back(_('Go Back'), 'is-horizontal') }}
+    </div>
+  </section>
+{% endblock %}
