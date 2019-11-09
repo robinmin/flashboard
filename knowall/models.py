@@ -1,4 +1,7 @@
+import enum
+
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, UniqueConstraint  # noqa: F401
+from sqlalchemy.types import Enum
 from sqlalchemy.orm import relationship, backref  # noqa: F401
 # from sqlalchemy.sql import func
 
@@ -40,6 +43,20 @@ class TableModel(BaseModel, ModelMixin):
     project = relationship(ProjectModel, foreign_keys=proj_id)
 
 
+class EnumLogicType(enum.IntEnum):
+    TEXT = 1
+    NORMINAL = 2
+    ORMINAL = 3
+    BINARY = 4
+    INTERNAL = 5
+    RATIO = 6
+    DATETIME = 7
+    ID = 8
+
+    def __str__(self):
+        return self.name.capitalize()
+
+
 class ColumnModel(BaseModel, ModelMixin):
     __tablename__ = 'ka_columns'
     __table_args__ = (
@@ -60,7 +77,8 @@ class ColumnModel(BaseModel, ModelMixin):
         80), nullable=False, comment='Source type')
     biz_category = Column('c_biz_category', String(80),
                           comment='Business category')
-    logic_type = Column('c_logic_type', String(80),  comment='Logic type')
+    logic_type = Column('c_logic_type', Enum(
+        EnumLogicType),  comment='Logic type')
     description = Column('c_desc', String(
         255), comment='Description')
     comments = Column('c_comments', String(

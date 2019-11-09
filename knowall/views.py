@@ -6,6 +6,8 @@ from flask_babel import gettext as _
 
 from flashboard.app import get_menu_list
 from .services import ProjectService, TableService, ColumnService
+from .models import EnumLogicType
+
 ###############################################################################
 
 
@@ -110,9 +112,11 @@ def init_view(app, url_prefix):
                       table_name + '.' + col_name, 'error')
                 return redirect(url_for('.index'))
 
+            logic_type = {tp.name: tp.value for tp in EnumLogicType}
             return render_template(
                 'column_detail.html',
                 menu_list=get_menu_list(),
+                logic_type=logic_type,
                 col_info=col_info
             )
 

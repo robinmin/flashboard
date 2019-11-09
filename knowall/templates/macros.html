@@ -49,3 +49,20 @@
     </div>
   </div>
 {%- endmacro %}
+
+{% macro form_select(label='', value='', options={}, class='', attrs='') -%}
+  <div class="field {{class}}">
+    <div class="field-label is-normal"><label class="label">{{label}}</label></div>
+    <div class="field-body">
+      <div class="field"><div class="control">
+        <div class="select">
+          <select {{attrs}}>
+            {% for key, val in options.items() %}
+            <option value="{{ val }}" {% if val == value %}selected{% endif %}>{{ key.capitalize() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div></div>
+    </div>
+  </div>
+{%- endmacro %}
