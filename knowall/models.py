@@ -44,6 +44,7 @@ class TableModel(BaseModel, ModelMixin):
 
 
 class EnumLogicType(enum.IntEnum):
+    UNKNOWN = 0
     TEXT = 1
     NORMINAL = 2
     ORMINAL = 3
@@ -75,10 +76,14 @@ class ColumnModel(BaseModel, ModelMixin):
         80), nullable=False, comment='Source column')
     src_type = Column('c_src_type', String(
         80), nullable=False, comment='Source type')
-    biz_category = Column('c_biz_category', String(80),
-                          comment='Business category')
     logic_type = Column('c_logic_type', Enum(
         EnumLogicType),  comment='Logic type')
+    biz_category = Column('c_biz_category', String(80),
+                          comment='Business category')
+    biz_type = Column('c_biz_type', String(80),
+                      comment='Business type')
+    biz_subtype = Column('c_biz_subtype', String(80),
+                         comment='Business subtype')
     description = Column('c_desc', String(
         255), comment='Description')
     comments = Column('c_comments', String(

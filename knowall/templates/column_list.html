@@ -24,6 +24,8 @@
           <td>{{ _('Source Column') }}</td>
           <td>{{ _('Source Type') }}</td>
           <td>{{ _('Business Category') }}</td>
+          <td>{{ _('Business Type') }}</td>
+          <td>{{ _('Business Subtype') }}</td>
           <td>{{ _('Logic Type') }}</td>
           <td>{{ _('Description') }}</td>
           <td>{{ _('Comments') }}</td>
@@ -39,6 +41,8 @@
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.src_col if col.src_col else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.src_type if col.src_type else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.biz_category if col.biz_category else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.biz_type if col.biz_type else '' }}</a></td>
+            <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.biz_subtype if col.biz_subtype else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.logic_type if col.logic_type else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.description if col.description else '' }}</a></td>
             <td><a href="{{ url_for('.column_detail', table_name=table_name, col_name=col.name) }}">{{ col.comments if col.comments else '' }}</a></td>

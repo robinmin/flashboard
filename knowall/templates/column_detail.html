@@ -16,7 +16,9 @@
       {{ macros.form_input(_('Source column'), col_info.src_col if col_info.src_col else '', 'is-horizontal', 'readonly') }}
       {{ macros.form_input(_('Source type'), col_info.src_type if col_info.src_type else '', 'is-horizontal', 'readonly') }}
       {{ macros.form_input(_('Business category'), col_info.biz_category if col_info.biz_category else '', 'is-horizontal', 'readonly') }}
-      {{ macros.form_select(_('Logic type'), col_info.logic_type, logic_type, 'is-horizontal', 'disabled') }}
+      {{ macros.form_input(_('Business type'), col_info.biz_type if col_info.biz_type else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_input(_('Business subtype'), col_info.biz_subtype if col_info.biz_subtype else '', 'is-horizontal', 'readonly') }}
+      {{ macros.form_select(_('Logic type'), col_info.logic_type if col_info.logic_type else 0, logic_type, 'is-horizontal', 'disabled') }}
       {{ macros.form_textarea(_('Description'), col_info.description if col_info.description else '', 'is-horizontal', 'readonly') }}
 
       {{ macros.form_input(_('Inuse?'), col_info.in_use if col_info.in_use else '', 'is-horizontal', 'readonly') }}
